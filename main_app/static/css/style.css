@@ -8,6 +8,7 @@
     font-family: "Rubik", sans-serif;
     font-style: normal;
     font-weight: 400;
+    
 }
 
 body {
@@ -20,6 +21,10 @@ body {
 
 .nav-color {
     background-color: #03C03C;
+}
+
+main {
+    padding: 6vmin 2vmin;
 }
 
 p { 
