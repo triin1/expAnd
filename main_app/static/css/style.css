@@ -1,0 +1,32 @@
+/* colours: */
+/* #F0FF42
+#82CD47
+#54B435
+#379237 */
+
+* {
+    font-family: "Rubik", sans-serif;
+    font-style: normal;
+    font-weight: 400;
+}
+
+body {
+    min-height: 100vh;
+    padding: 4vmin;
+    box-sizing: border-box;
+    margin: 0;
+    background-color: #fffd8d;
+}
+
+.nav-color {
+    background-color: #03C03C;
+}
+
+p { 
+    font-family: Helvetica, sans-serif;
+}
+
+.navbar-nav > li{
+    padding-left: 10px;
+    padding-right: 10px;
+  }
