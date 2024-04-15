@@ -8,6 +8,9 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name_plural = "categories"
+
 
 class Subcategory(models.Model):
     name = models.CharField(max_length=50)
@@ -15,6 +18,10 @@ class Subcategory(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name_plural = "subcategories"
+
 
 class Expense(models.Model):
     expense_date = models.DateField()

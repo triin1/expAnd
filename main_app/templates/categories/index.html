@@ -3,12 +3,23 @@
 {% block content %}
 
     <h1>Manage categories</h1>
+
     {% for category in categories %}
-        {{ category.name }}
-        {% for subcategory in category.subcategory_set.all %}
-            {{ subcategory.name }}
-        {% endfor %}
-    {% endfor %}
+        <div>{{ category.name }}</div>
+        <ul>
+            {% for subcategory in category.subcategory_set.all %}
+            <li>{{ subcategory.name }}</li>
+            {% endfor %}
+        </ul>
+    {% endfor%}
+
+    <hr>
+
+    <form action="{% url 'add_category' %}" method="post">
+        {% csrf_token %}
+        {{ category_form.as_p }}
+        <input type="submit" value="Add category" class="btn btn-dark">
+    </form>
 
     <hr>
 

@@ -1,18 +1,19 @@
 from django.shortcuts import render, redirect
-from django.views.generic import ListView
 from django.views.generic.edit import CreateView
 from .models import Expense, Category
-from .forms import SubcategoryForm
+from .forms import CategoryForm, SubcategoryForm
 
 
 def home(request):
     return render(request, 'home.html')
 
 
-class CategoryCreate(CreateView):
-    model = Category
-    fields = '__all__'
-    success_url = "/categories/"
+def add_category(request):
+    category_form = CategoryForm(request.POST)
+    if category_form.is_valid():
+        new_category = category_form.save(commit=False)
+        new_category.save()
+    return redirect('category_index')
 
 
 def add_subcategory(request):
@@ -25,9 +26,11 @@ def add_subcategory(request):
 
 def category_index(request):
     categories = Category.objects.all()
+    category_form = CategoryForm()
     subcategory_form = SubcategoryForm()
     return render(request, 'categories/index.html', {
         'categories': categories,
+        'category_form': category_form,
         'subcategory_form': subcategory_form,
     })
 
@@ -35,3 +38,4 @@ def category_index(request):
 class ExpenseCreate(CreateView):
     model = Expense
     fields = ['category', 'expense_date', 'expense_amount', 'description']
+    # success_url = "/expenses/"
