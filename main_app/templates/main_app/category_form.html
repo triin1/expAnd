@@ -2,12 +2,11 @@
 
 {% block content %}
 
-    <h1>Add expense</h1>
+    <h1>Add categories</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Add expense" class="btn btn-dark">
+        <input type="submit" value="Add category" class="btn btn-dark">
     </form>
-
 
 {% endblock %}
