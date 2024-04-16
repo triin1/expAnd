@@ -20,7 +20,7 @@ class DateInput(forms.DateInput):
     input_type = 'date'
 
     def __init__(self, **kwargs):
-        kwargs['format'] = '%Y-%m-%d'
+        kwargs['format'] = '%d-%m-%Y'
         super().__init__(**kwargs)
 
 

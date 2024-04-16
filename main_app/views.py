@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.db.models import Sum
 from .models import Expense, Category, Subcategory
 from .forms import CategoryForm, SubcategoryForm, ExpenseForm
 
@@ -89,3 +90,13 @@ class ExpenseUpdate(UpdateView):
 class ExpenseDelete(DeleteView):
     model = Expense
     success_url = '/expenses/detail'
+
+
+def summary_index(request):
+    expenses = Expense.objects.all()
+    sum_expenses = Expense.objects.aggregate(Sum('expense_amount'))['expense_amount__sum']
+    return render(request, 'expenses/summary.html', {
+        'expenses': expenses,
+        'sum_expenses': sum_expenses
+    })
+
