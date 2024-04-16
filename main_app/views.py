@@ -101,7 +101,7 @@ def summary_index(request):
     # now = datetime.datetime.now()
     # total_expenses = Expense.objects.filter(expense_date__year=now.year, expense_date__month=now.month).aggregate(total_expenses=Sum('expense_amount'))['total_expenses']
     # total_expenses = Expense.objects.annotate(month=TruncMonth('expense_date')).values('month').annotate(total_expenses=Sum('expense_amount'))
-    total_expenses = Expense.objects.annotate(month=TruncMonth('expense_date'), category_name=F('category__name')).values('month', 'category_name').annotate(total_expenses=Sum('expense_amount'))
+    total_expenses = Expense.objects.annotate(month=TruncMonth('expense_date'), category_name=F('category__name')).order_by('month').values('month', 'category_name').annotate(total_expenses=Sum('expense_amount'))
 
     return render(request, 'expenses/summary.html', {
         'expenses': expenses,
