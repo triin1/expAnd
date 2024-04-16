@@ -10,6 +10,7 @@ class Category(models.Model):
 
     class Meta:
         verbose_name_plural = "categories"
+        ordering = ['name']
 
 
 class Subcategory(models.Model):
@@ -24,12 +25,13 @@ class Subcategory(models.Model):
 
 
 class Expense(models.Model):
-    expense_date = models.DateField()
+    expense_date = models.DateField(null=True)
     expense_amount = MoneyField(max_digits=14, decimal_places=2, default_currency='AUD', default='0')
-    budget_date = models.DateField()
+    budget_date = models.DateField(null=True)
     budget_amount = MoneyField(max_digits=14, decimal_places=2, default_currency='AUD', default='0')
     description = models.TextField(max_length=256, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    subcategory = models.ForeignKey(Subcategory, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.expense_amount} recorded on {self.date}"
+        return f"{self.expense_amount} recorded on {self.expense_date}"

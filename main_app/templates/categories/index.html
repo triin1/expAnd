@@ -5,10 +5,18 @@
     <h1>Manage categories</h1>
 
     {% for category in categories %}
-        <div>{{ category.name }}</div>
+        <div>
+            {{ category.name }}
+            <a href="{% url 'update_category' category.id %}">Update</a>
+            <a href="{% url 'delete_category' category.id %}">Delete</a>
+        </div>
         <ul>
             {% for subcategory in category.subcategory_set.all %}
-            <li>{{ subcategory.name }}</li>
+            <li>
+                {{ subcategory.name }}
+                <a href="{% url 'update_subcategory' subcategory.id %}">Update</a>
+                <a href="{% url 'delete_subcategory' subcategory.id %}">Delete</a>
+            </li>
             {% endfor %}
         </ul>
     {% endfor%}

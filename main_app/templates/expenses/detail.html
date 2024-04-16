@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1>Expense list</h1>
+    {% for expense in expenses %}    
+        <p>{{ expense.category.name }} {{ expense.subcategory.name }} {{ expense.expense_date }} {{ expense.expense_amount }}</p>
+    {% endfor %}
+
+{% endblock %}

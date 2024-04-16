@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1>Delete subcategory</h1>
+    <p>
+        Are you sure you want to delete {{ category.subcategory.name }}
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="Yes" class="btn btn-dark">
+        <a href="{% url 'category_index' %}" class="btn btn-dark">No</a>
+    </form>
+
+{% endblock %}

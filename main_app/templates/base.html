@@ -28,7 +28,7 @@
                 <div class="collapse navbar-collapse" id="navbarNavLightDropdown">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0 mx-2">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                            <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
                         </li>
                         <!-- Dropdown navbar links -->
                         <li class="nav-item dropdown">
@@ -36,10 +36,10 @@
                                 Expenses
                             </a>
                             <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
-                                <li><a class="dropdown-item" href="#">New expense</a></li>
+                                <li><a class="dropdown-item" href="{% url 'expense_index' %}">New expense</a></li>
                                 <div class="dropdown-divider"></div>
-                                <li><a class="dropdown-item" href="#">View all expenses</a></li>
-                                <li><a class="dropdown-item" href="#">Manage categories</a></li>
+                                <li><a class="dropdown-item" href="{% url 'expense_detail' %}">View all expenses</a></li>
+                                <li><a class="dropdown-item" href="{% url 'category_index' %}">Manage categories</a></li>
                                 <li><a class="dropdown-item" href="#">Expense summary</a></li>
                                 <li><a class="dropdown-item" href="#">Manage budget</a></li>
                             </ul>
