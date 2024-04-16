@@ -4,6 +4,30 @@
 
     <h1>Expense summary</h1>
 
-    <p>{{ sum_expenses }}</p>
+    <table class="table table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Category</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+                <tr>
+                    <td></td>       
+                    <td></td>       
+                </tr>
+        </tbody>
+    </table>
+
+    {% for expense in total_expenses %}
+        {{ expense.month }} {{ expense.total_expenses }}
+    {% endfor %}
 
 {% endblock %}
+
+<!-- 
+<p>{{ year }}</p>
+<p>{{ month }}</p>
+<p>{{ total_expenses }}</p>
+
+<p>{{ sum_expenses }}</p> -->
