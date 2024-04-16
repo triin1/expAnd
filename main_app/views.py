@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.db.models import Sum
-from django.db.models.functions import TruncMonth, TruncYear
+from django.db.models import Sum, F
+from django.db.models.functions import TruncMonth
 # import datetime
 from .models import Expense, Category, Subcategory
 from .forms import CategoryForm, SubcategoryForm, ExpenseForm
@@ -96,10 +96,13 @@ class ExpenseDelete(DeleteView):
 
 def summary_index(request):
     expenses = Expense.objects.all()
+    categories = Category.objects.all()
     # sum_expenses = Expense.objects.aggregate(Sum('expense_amount'))['expense_amount__sum']
     # now = datetime.datetime.now()
     # total_expenses = Expense.objects.filter(expense_date__year=now.year, expense_date__month=now.month).aggregate(total_expenses=Sum('expense_amount'))['total_expenses']
-    total_expenses = Expense.objects.annotate(month=TruncMonth('expense_date')).values('month').annotate(total_expenses=Sum('expense_amount'))
+    # total_expenses = Expense.objects.annotate(month=TruncMonth('expense_date')).values('month').annotate(total_expenses=Sum('expense_amount'))
+    total_expenses = Expense.objects.annotate(month=TruncMonth('expense_date'), category_name=F('category__name')).values('month', 'category_name').annotate(total_expenses=Sum('expense_amount'))
+
     return render(request, 'expenses/summary.html', {
         'expenses': expenses,
         # 'sum_expenses': sum_expenses,
