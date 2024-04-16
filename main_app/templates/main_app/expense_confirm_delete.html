@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1>Delete category</h1>
+    <p>
+        Are you sure you want to delete the {{ expense.expense_amount }} recorded in {{ expense.category }}, {{ expense.subcategory }}
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="Yes" class="btn btn-dark">
+        <a href="{% url 'expense_detail' %}" class="btn btn-dark">No</a>
+    </form>
+
+{% endblock %}

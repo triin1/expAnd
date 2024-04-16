@@ -13,6 +13,8 @@ urlpatterns = [
     path('categories/<int:pk>/sub_delete/', views.SubcategoryDelete.as_view(), name='delete_subcategory'),
 
     path('expenses/', views.expenses_index, name="expense_index"),
-    path('expenses/detail', views.expenses_detail, name="expense_detail"),
+    path('expenses/detail/', views.expenses_detail, name="expense_detail"),
     path('expenses/add/', views.add_expense, name='add_expense'),
+    path('expenses/<int:pk>/update/', views.ExpenseUpdate.as_view(), name='update_expense'),
+    path('expenses/<int:pk>/delete/', views.ExpenseDelete.as_view(), name='delete_expense'),
 ]

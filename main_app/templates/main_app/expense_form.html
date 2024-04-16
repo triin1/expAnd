@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <form action="{% url 'update_expense' expense.id %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Update expense" class="btn btn-dark">
+    </form>
+
+{% endblock %}

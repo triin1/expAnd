@@ -64,7 +64,7 @@ def add_expense(request):
         new_expense = expense_form.save(commit=False)
         new_expense.save()
     return redirect('expense_detail')
-    
+
 
 def expenses_index(request):
     expense_form = ExpenseForm()
@@ -78,3 +78,14 @@ def expenses_detail(request):
     return render(request, 'expenses/detail.html', {
         'expenses': expenses,
     })
+
+
+class ExpenseUpdate(UpdateView):
+    model = Expense
+    fields = ['category', 'subcategory', 'expense_date', 'expense_amount', 'description']
+    success_url = '/expenses/detail'
+
+
+class ExpenseDelete(DeleteView):
+    model = Expense
+    success_url = '/expenses/detail'
