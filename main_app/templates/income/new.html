@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1>Add income</h1>
+    
+    <form action="{% url 'add_income' %}" method="post">
+        {% csrf_token %}
+        {{ income_form.as_p }}
+        <input type="submit" value="Add income" class="btn btn-dark">
+    </form>
+
+{% endblock %}

@@ -30,6 +30,7 @@
                 <hr>
 
                 <h4>Add a budget item</h4>
+                
                 <form action="{% url 'add_budget_amount' %}" method="post">
                     {% csrf_token %}
                     {{ budget_form.as_p }}

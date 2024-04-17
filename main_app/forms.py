@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from .models import Category, Subcategory, Expense, Budget
+from .models import Category, Subcategory, Expense, Budget, Income
 
 
 class CategoryForm(ModelForm):
@@ -44,3 +44,14 @@ class BudgetForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['budget_date'].widget = DateInput()
+
+
+class IncomeForm(ModelForm):
+    class Meta:
+        model = Income
+        fields = ['income_date', 'income_amount', 'description']
+
+    # Function for implementing the calendar widget on form:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['income_date'].widget = DateInput()

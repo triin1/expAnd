@@ -4,8 +4,8 @@ from django.db.models import Sum, F
 from django.db.models.functions import TruncMonth
 from django.utils import timezone
 from datetime import datetime, timedelta
-from .models import Expense, Category, Subcategory, Budget
-from .forms import CategoryForm, SubcategoryForm, ExpenseForm, BudgetForm
+from .models import Expense, Category, Subcategory, Budget, Income
+from .forms import CategoryForm, SubcategoryForm, ExpenseForm, BudgetForm, IncomeForm
 
 
 def home(request):
@@ -97,8 +97,10 @@ class ExpenseDelete(DeleteView):
 
 def summary_index(request):
     expenses = Expense.objects.all()
+
     # Calculate total expenses by category and by month and order the expenses by month with most recent at the top:
     total_expenses = Expense.objects.annotate(month=TruncMonth('expense_date'), category_name=F('category__name')).order_by('-month').values('month', 'category_name').annotate(total_expenses=Sum('expense_amount'))
+    
     return render(request, 'expenses/summary.html', {
         'expenses': expenses,
         'total_expenses': total_expenses
@@ -145,3 +147,29 @@ class BudgetUpdate(UpdateView):
 class BudgetDelete(DeleteView):
     model = Budget
     success_url = '/budget/'
+
+
+# All income related views:
+# Page to add a form for new income to:
+def new_income(request):
+    income_form = IncomeForm()
+    return render(request, 'income/new.html', {
+        'income_form': income_form
+    })
+
+
+# New income form (added to the new_income page):
+def add_income(request):
+    income_form = IncomeForm(request.POST)
+    if income_form.is_valid():
+        new_income_amount = income_form.save(commit=False)
+        new_income_amount.save()
+    return redirect('income_index')
+
+
+def income_index(request):
+    income = Income.objects.all()
+
+    return render(request, 'income/index.html', {
+        'income': income,
+    })

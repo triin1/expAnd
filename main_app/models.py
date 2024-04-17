@@ -45,3 +45,15 @@ class Budget(models.Model):
     
     class Meta:
         verbose_name_plural = "budget"
+
+
+class Income(models.Model):
+    income_date = models.DateField()
+    income_amount = MoneyField(max_digits=14, decimal_places=2, default_currency='AUD', default='0')
+    description = models.CharField(max_length=256)
+
+    def __str__(self):
+        return f"{self.income_amount} recorded on {self.income_date}"
+
+    class Meta:
+        verbose_name_plural = "income"
