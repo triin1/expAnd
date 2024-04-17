@@ -24,12 +24,14 @@ urlpatterns = [
 
     # all paths related to budget:
     path('budget/', views.budget_index, name="budget_index"),
-    path('budget/add_amount/', views.add_budget_amount, name='add_budget_amount'),
-    path('budget/<int:pk>/budget_update/', views.BudgetUpdate.as_view(), name='update_budget'),
-    path('budget/<int:pk>/budget_delete/', views.BudgetDelete.as_view(), name='delete_budget'),
+    path('budget/add/', views.add_budget_amount, name='add_budget_amount'),
+    path('budget/<int:pk>/update/', views.BudgetUpdate.as_view(), name='update_budget'),
+    path('budget/<int:pk>/delete/', views.BudgetDelete.as_view(), name='delete_budget'),
 
     # all paths related to income:
     path('income/new/', views.new_income, name="new_income"),
     path('income/add/', views.add_income, name="add_income"),
     path('income/', views.income_index, name="income_index"),
+    path('income/<int:pk>/update/', views.IncomeUpdate.as_view(), name='update_income'),
+    path('income/<int:pk>/delete/', views.IncomeDelete.as_view(), name='delete_income'),
 ]

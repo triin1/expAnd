@@ -20,8 +20,8 @@
                     <td>{{ i.income_date }}</td>    
                     <td>{{ i.income_amount }}</td>    
                     <td>{{ i.description }}</td>    
-                    <td><a href="#">Update</a></td>    
-                    <td><a href="#">Delete</a></td>    
+                    <td><a href="{% url 'update_income' i.id %}">Update</a></td>    
+                    <td><a href="{% url 'delete_income' i.id %}">Delete</a></td>    
                 </tr>
             {% endfor %}
         </tbody>

@@ -173,3 +173,14 @@ def income_index(request):
     return render(request, 'income/index.html', {
         'income': income,
     })
+
+
+class IncomeUpdate(UpdateView):
+    model = Income
+    fields = '__all__'
+    success_url = '/income/'
+
+
+class IncomeDelete(DeleteView):
+    model = Income
+    success_url = '/income/'
