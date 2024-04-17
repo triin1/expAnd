@@ -14,25 +14,27 @@
                             <th>Category</th>
                             <th>Monthly expenses</th>
                             <th>Monthly budget</th>
+                            <th></th>
                         </tr>
                     </thead>
-                    <tbody>   
+                    <tbody>
+                        {% for budget in expenses %}
                         <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>{{ budget.category.name }}</td>
+                            <td>{{ budget.budget_date }}</td>
+                            <td>{{ budget.budget_amount }}</td>
+                            <td><a href="{% url 'update_budget' budget.id %}">Update</a></td>
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
             <div class="col-6">
                 <h4>Manage budget</h4>
 
-                <form action="{% url 'add_budget_amount' %}" method="post">
-                    {% csrf_token %}
-                    {{ budget_form.as_p }}
-                    <input type="submit" value="Add budget amount" class="btn btn-dark">
-                </form>
+                {% for b in current_budget  %}
+                <p>{{ b.category_name }} : {{ b.current_budget }}</p>
+                {% endfor %}
                 
             </div>
         </div>

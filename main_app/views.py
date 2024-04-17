@@ -3,7 +3,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.db.models import Sum, F
 from django.db.models.functions import TruncMonth
 import datetime
-from .models import Expense, Category, Subcategory
+from .models import Expense, Category, Subcategory, Budget
 from .forms import CategoryForm, SubcategoryForm, ExpenseForm, BudgetForm
 
 
@@ -112,18 +112,39 @@ def summary_index(request):
 
 
 # All budget related views:
+# def add_budget_amount(request):
+#     budget_form = BudgetForm(request.POST)
+#     if budget_form.is_valid():
+#         new_budget_amount = budget_form.save(commit=False)
+#         new_budget_amount.save()
+#     return redirect('budget_index')
+
+
 def budget_index(request):
+    budget = Budget.objects.all()
     budget_form = BudgetForm()
     categories = Category.objects.all()
+    # creating a variable that holds current month's budget amounts in it:
+    now = datetime.datetime.now()
+    # current_budget = Expense.objects.filter(budget_date__year=now.year, budget_date__month=now.month).aggregate(current_budget=Sum('budget_amount'))['current_budget']
+
+    current_budget = Expense.objects.annotate(month=TruncMonth('budget_date'), category_name=F('category__name')).order_by('-month').values('month', 'category_name').annotate(current_budget=Sum('budget_amount'))
+
     return render(request, 'budget/index.html', {
         'categories': categories,
         'budget_form': budget_form,
+        'expenses': expenses,
+        'current_budget': current_budget,
+        'year': now.year,
+        'month': now.strftime('%B'),
     })
 
 
-def add_budget_amount(request):
+def budget_update(request, budget_id):
     budget_form = BudgetForm(request.POST)
     if budget_form.is_valid():
         new_budget_amount = budget_form.save(commit=False)
+        new_budget_amount.budget_id = budget_id
         new_budget_amount.save()
     return redirect('budget_index')
+

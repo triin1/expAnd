@@ -23,5 +23,6 @@ urlpatterns = [
 
     # all paths related to budget
     path('budget/', views.budget_index, name="budget_index"),
-    path('budget/add_amount/', views.add_budget_amount, name='add_budget_amount'),
+    # path('budget/add_amount/', views.add_budget_amount, name='add_budget_amount'),
+    path('budget/<int:budget_id>/budget_update/', views.budget_update, name='update_budget'),
 ]

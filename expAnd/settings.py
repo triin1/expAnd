@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'expAnd.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'exp',
+        'NAME': 'ExpAnd',
     }
 }
 
