@@ -210,3 +210,14 @@ def goal_index(request):
     return render(request, 'goals/index.html', {
         'goals': goals,
     })
+
+
+class GoalUpdate(UpdateView):
+    model = Goal
+    fields = '__all__'
+    success_url = '/goals/'
+
+
+class GoalDelete(DeleteView):
+    model = Goal
+    success_url = '/goals/'
