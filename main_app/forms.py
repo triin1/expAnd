@@ -38,7 +38,7 @@ class ExpenseForm(ModelForm):
 class BudgetForm(ModelForm):
     class Meta:
         model = Budget
-        fields = ['budget_date', 'budget_amount']
+        fields = ['category', 'budget_date', 'budget_amount']
 
     # Function for implementing the calendar widget on form:
     def __init__(self, *args, **kwargs):

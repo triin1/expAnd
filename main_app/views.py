@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.db.models import Sum, F
 from django.db.models.functions import TruncMonth
-import datetime
+from django.utils import timezone
+from datetime import datetime, timedelta
 from .models import Expense, Category, Subcategory, Budget
 from .forms import CategoryForm, SubcategoryForm, ExpenseForm, BudgetForm
 
@@ -96,55 +97,51 @@ class ExpenseDelete(DeleteView):
 
 def summary_index(request):
     expenses = Expense.objects.all()
-    # sum_expenses = Expense.objects.aggregate(Sum('expense_amount'))['expense_amount__sum']
-    # now = datetime.datetime.now()
-    # current_total = Expense.objects.filter(expense_date__year=now.year, expense_date__month=now.month).aggregate(total_expenses=Sum('expense_amount'))['total_expenses']
     # Calculate total expenses by category and by month and order the expenses by month with most recent at the top:
     total_expenses = Expense.objects.annotate(month=TruncMonth('expense_date'), category_name=F('category__name')).order_by('-month').values('month', 'category_name').annotate(total_expenses=Sum('expense_amount'))
     return render(request, 'expenses/summary.html', {
         'expenses': expenses,
-        # 'sum_expenses': sum_expenses,
-        # 'current_total': current_total,
-        # 'year': now.year,
-        # 'month': now.strftime('%B'),
         'total_expenses': total_expenses
     })
 
 
 # All budget related views:
-# def add_budget_amount(request):
-#     budget_form = BudgetForm(request.POST)
-#     if budget_form.is_valid():
-#         new_budget_amount = budget_form.save(commit=False)
-#         new_budget_amount.save()
-#     return redirect('budget_index')
+def add_budget_amount(request):
+    budget_form = BudgetForm(request.POST)
+    if budget_form.is_valid():
+        new_budget_amount = budget_form.save(commit=False)
+        new_budget_amount.save()
+    return redirect('budget_index')
 
 
 def budget_index(request):
     budget = Budget.objects.all()
     budget_form = BudgetForm()
-    categories = Category.objects.all()
-    # creating a variable that holds current month's budget amounts in it:
-    now = datetime.datetime.now()
-    # current_budget = Expense.objects.filter(budget_date__year=now.year, budget_date__month=now.month).aggregate(current_budget=Sum('budget_amount'))['current_budget']
 
-    current_budget = Expense.objects.annotate(month=TruncMonth('budget_date'), category_name=F('category__name')).order_by('-month').values('month', 'category_name').annotate(current_budget=Sum('budget_amount'))
+    # Defining the first day and the last day of the current month.
+    first_day = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    first_day_next_month = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0) + timedelta(days=32)
+    first_day_next_month = first_day_next_month.replace(day=1)
+    last_day = first_day_next_month - timedelta(days=1)
+
+    # Calculating the current month's budget amounts by category. The annotate defines calculation parameters of month and category name
+    # and sums up the budget amounts based on these parameters. Filter uses first and last day of the month to filter out the sums by
+    # category only for the current month.
+    current_budget = Budget.objects.annotate(month=TruncMonth('budget_date'), category_name=F('category__name')).values('month', 'category_name').annotate(current_budget=Sum('budget_amount')).filter(budget_date__gte=first_day, budget_date__lte=last_day)
 
     return render(request, 'budget/index.html', {
-        'categories': categories,
         'budget_form': budget_form,
-        'expenses': expenses,
+        'budget': budget,
         'current_budget': current_budget,
-        'year': now.year,
-        'month': now.strftime('%B'),
     })
 
 
-def budget_update(request, budget_id):
-    budget_form = BudgetForm(request.POST)
-    if budget_form.is_valid():
-        new_budget_amount = budget_form.save(commit=False)
-        new_budget_amount.budget_id = budget_id
-        new_budget_amount.save()
-    return redirect('budget_index')
+class BudgetUpdate(UpdateView):
+    model = Budget
+    fields = '__all__'
+    success_url = '/budget/'
 
+
+class BudgetDelete(DeleteView):
+    model = Budget
+    success_url = '/budget/'

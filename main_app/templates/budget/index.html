@@ -6,36 +6,61 @@
 
     <div class="container">
         <div class="row">
+
             <div class="col-6">
-                <h4>Current month</h4>
+                <h4>Current month budget summary</h4>
+
+                <table class="table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Category</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for b in current_budget %}
+                        <tr>
+                            <td>{{ b.category_name }}</td>
+                            <td>{{ b.current_budget }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <hr>
+
+                <h4>Add a budget item</h4>
+                <form action="{% url 'add_budget_amount' %}" method="post">
+                    {% csrf_token %}
+                    {{ budget_form.as_p }}
+                    <input type="submit" value="Add budget amount" class="btn btn-dark">
+                </form>
+                
+            </div>
+            <div class="col-6">
+                <h4>Budget entries</h4>
                 <table class="table table-hover">
                     <thead class="table-dark">
                         <tr>
                             <th>Category</th>
-                            <th>Monthly expenses</th>
-                            <th>Monthly budget</th>
+                            <th>Month</th>
+                            <th>Amount</th>
+                            <th></th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for budget in expenses %}
+                        {% for b in budget %}
                         <tr>
-                            <td>{{ budget.category.name }}</td>
-                            <td>{{ budget.budget_date }}</td>
-                            <td>{{ budget.budget_amount }}</td>
-                            <td><a href="{% url 'update_budget' budget.id %}">Update</a></td>
+                            <td>{{ b.category.name }}</td>
+                            <td>{{ b.budget_date|date:"F Y" }}</td>
+                            <td>{{ b.budget_amount }}</td>
+                            <td><a href="{% url 'update_budget' b.id %}">Update</a></td>
+                            <td><a href="{% url 'delete_budget' b.id %}">Delete</a></td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-            </div>
-            <div class="col-6">
-                <h4>Manage budget</h4>
-
-                {% for b in current_budget  %}
-                <p>{{ b.category_name }} : {{ b.current_budget }}</p>
-                {% endfor %}
-                
             </div>
         </div>
     </div>
