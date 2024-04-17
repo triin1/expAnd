@@ -1,6 +1,5 @@
 from django.db import models
 from djmoney.models.fields import MoneyField
-from django.db.models import Sum, Case, When
 
 
 class Category(models.Model):
@@ -32,7 +31,7 @@ class Expense(models.Model):
     budget_amount = MoneyField(max_digits=14, decimal_places=2, default_currency='AUD', default='0')
     description = models.TextField(max_length=256, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    subcategory = models.ForeignKey(Subcategory, on_delete=models.CASCADE)
+    subcategory = models.ForeignKey(Subcategory, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.expense_amount} recorded on {self.expense_date}"
+        return f"{self.expense_amount} recorded on {self.expense_date} or {self.budget_amount} recorded on {self.budget_date}"

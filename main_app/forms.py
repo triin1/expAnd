@@ -15,7 +15,7 @@ class SubcategoryForm(ModelForm):
         fields = '__all__'
 
 
-# model for formatting date display on form:
+# Model for formatting date display on form:
 class DateInput(forms.DateInput):
     input_type = 'date'
 
@@ -29,7 +29,18 @@ class ExpenseForm(ModelForm):
         model = Expense
         fields = ['category', 'subcategory', 'expense_date', 'expense_amount', 'description']
 
+    # Function for implementing the calendar widget on form:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['expense_date'].widget = DateInput()
 
+
+class BudgetForm(ModelForm):
+    class Meta:
+        model = Expense
+        fields = ['category', 'budget_date', 'budget_amount']
+
+    # Function for implementing the calendar widget on form:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['budget_date'].widget = DateInput()
