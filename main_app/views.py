@@ -4,8 +4,8 @@ from django.db.models import Sum, F
 from django.db.models.functions import TruncMonth
 from django.utils import timezone
 from datetime import datetime, timedelta
-from .models import Expense, Category, Subcategory, Budget, Income
-from .forms import CategoryForm, SubcategoryForm, ExpenseForm, BudgetForm, IncomeForm
+from .models import Expense, Category, Subcategory, Budget, Income, Goal
+from .forms import CategoryForm, SubcategoryForm, ExpenseForm, BudgetForm, IncomeForm, GoalForm
 
 
 def home(request):
@@ -70,9 +70,9 @@ def add_expense(request):
     return redirect('expense_detail')
 
 
-def expenses_index(request):
+def expenses_new(request):
     expense_form = ExpenseForm()
-    return render(request, 'expenses/index.html', {
+    return render(request, 'expenses/new.html', {
         'expense_form': expense_form
     })
 
@@ -184,3 +184,29 @@ class IncomeUpdate(UpdateView):
 class IncomeDelete(DeleteView):
     model = Income
     success_url = '/income/'
+
+
+# All goals related views:
+# Page to add a form for new goals to:
+def new_goal(request):
+    goal_form = GoalForm()
+    return render(request, 'goals/new.html', {
+        'goal_form': goal_form
+    })
+
+
+# New goal form (added to the new_goal page):
+def add_goal(request):
+    goal_form = GoalForm(request.POST)
+    if goal_form.is_valid():
+        new_goal = goal_form.save(commit=False)
+        new_goal.save()
+    return redirect('goal_index')
+
+
+def goal_index(request):
+    goals = Goal.objects.all()
+
+    return render(request, 'goals/index.html', {
+        'goals': goals,
+    })

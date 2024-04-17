@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% for goal in goals %}
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{ goal.name }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Target date: {{ goal.goal_date }}</h6>
+            <p class="card-text">{{ goal.description }}</p>
+            <p>Goal amount: {{ goal.goal_amount }}</p>
+            <p>Goal progress: {{ goal.amount_saved }}</p>
+            <a href="#" class="card-link">Update goal</a>
+            <a href="#" class="card-link">Delete goal</a>
+        </div>
+    </div>
+{% endfor %}
+
+{% endblock %}

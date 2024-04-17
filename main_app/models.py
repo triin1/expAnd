@@ -57,3 +57,15 @@ class Income(models.Model):
 
     class Meta:
         verbose_name_plural = "income"
+
+
+class Goal(models.Model):
+    name = models.CharField(max_length=256)
+    goal_amount = MoneyField(max_digits=14, decimal_places=2, default_currency='AUD', default='0')
+    goal_date = models.DateField('Goal target date', null=True, blank=True)
+    description = models.TextField(max_length=256, blank=True)
+    amount_saved = MoneyField(max_digits=14, decimal_places=2, default_currency='AUD', default='0', blank=True)
+
+
+    def __str__(self):
+        return f"Goal {self.name} of {self.goal_amount}"

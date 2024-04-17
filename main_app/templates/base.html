@@ -36,7 +36,7 @@
                                 Expenses
                             </a>
                             <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
-                                <li><a class="dropdown-item" href="{% url 'expense_index' %}">New expense</a></li>
+                                <li><a class="dropdown-item" href="{% url 'expense_new' %}">New expense</a></li>
                                 <div class="dropdown-divider"></div>
                                 <li><a class="dropdown-item" href="{% url 'expense_detail' %}">View all expenses</a></li>
                                 <li><a class="dropdown-item" href="{% url 'category_index' %}">Manage categories</a></li>
@@ -59,10 +59,9 @@
                                 Goals
                             </a>
                             <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
-                                <li><a class="dropdown-item" href="#">Add goals</a></li>
-                                <li><a class="dropdown-item" href="#">Update goals</a></li>
+                                <li><a class="dropdown-item" href="{% url 'new_goal' %}">Add goals</a></li>
                                 <div class="dropdown-divider"></div>
-                                <li><a class="dropdown-item" href="#">View goals</a></li>
+                                <li><a class="dropdown-item" href="{% url 'goal_index' %}">Manage goals</a></li>
                             </ul>
                         </li>
                         <!-- Login / logout links -->

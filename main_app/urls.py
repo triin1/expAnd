@@ -15,7 +15,7 @@ urlpatterns = [
     path('categories/<int:pk>/sub_delete/', views.SubcategoryDelete.as_view(), name='delete_subcategory'),
 
     # all paths related to expenses:
-    path('expenses/', views.expenses_index, name="expense_index"),
+    path('expenses/new', views.expenses_new, name="expense_new"),
     path('expenses/detail/', views.expenses_detail, name="expense_detail"),
     path('expenses/add/', views.add_expense, name='add_expense'),
     path('expenses/<int:pk>/update/', views.ExpenseUpdate.as_view(), name='update_expense'),
@@ -34,4 +34,9 @@ urlpatterns = [
     path('income/', views.income_index, name="income_index"),
     path('income/<int:pk>/update/', views.IncomeUpdate.as_view(), name='update_income'),
     path('income/<int:pk>/delete/', views.IncomeDelete.as_view(), name='delete_income'),
+
+    # all paths related to goals:
+    path('goals/new/', views.new_goal, name="new_goal"),
+    path('goals/add/', views.add_goal, name="add_goal"),
+    path('goals/', views.goal_index, name="goal_index"),
 ]
