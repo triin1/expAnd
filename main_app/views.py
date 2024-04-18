@@ -8,8 +8,10 @@ from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+
 from .models import Expense, Category, Subcategory, Budget, Income, Goal
 from .forms import CategoryForm, SubcategoryForm, ExpenseForm, BudgetForm, IncomeForm, GoalForm
+from .utils import get_plot
 
 
 # All general and authentication related views:
@@ -48,7 +50,6 @@ def add_subcategory(request):
     if subcategory_form.is_valid():
         new_subcategory = subcategory_form.save(commit=False)
         new_subcategory.user = request.user
-        # subcategory_form.instance.user = request.user
         new_subcategory.save()
     return redirect('category_index')
 
@@ -103,7 +104,6 @@ def add_expense(request):
     if expense_form.is_valid():
         new_expense = expense_form.save(commit=False)
         new_expense.user = request.user
-        # expense_form.instance.user = request.user
         new_expense.save()
     return redirect('expense_detail')
 
@@ -133,10 +133,21 @@ def summary_index(request):
 
     # Calculate total expenses by category and by month and order the expenses by month with most recent at the top:
     total_expenses = Expense.objects.filter(user=request.user).annotate(month=TruncMonth('expense_date'), category_name=F('category__name')).order_by('-month').values('month', 'category_name').annotate(total_expenses=Sum('expense_amount'))
-    
+
+    # Extracting necessary data out of total_expenses queryset 
+    category_names = [item['category_name'] for item in total_expenses]
+    totals = [float(item['total_expenses']) for item in total_expenses]
+    print(totals)
+
+    # An attempt to create a chart
+    x = category_names
+    y = totals
+    chart = get_plot(x, y)
+
     return render(request, 'expenses/summary.html', {
         'expenses': expenses,
-        'total_expenses': total_expenses
+        'total_expenses': total_expenses,
+        'chart': chart
     })
 
 
@@ -147,7 +158,6 @@ def add_budget_amount(request):
     if budget_form.is_valid():
         new_budget_amount = budget_form.save(commit=False)
         new_budget_amount.user = request.user
-        # budget_form.instance.user = request.user
         new_budget_amount.save()
     return redirect('budget_index')
 
@@ -203,7 +213,6 @@ def add_income(request):
     if income_form.is_valid():
         new_income_amount = income_form.save(commit=False)
         new_income_amount.user = request.user
-        # income_form.instance.user = request.user
         new_income_amount.save()
     return redirect('income_index')
 
@@ -245,7 +254,6 @@ def add_goal(request):
     if goal_form.is_valid():
         new_goal = goal_form.save(commit=False)
         new_goal.user = request.user
-        # goal_form.instance.user = request.user
         new_goal.save()
     return redirect('goal_index')
 
