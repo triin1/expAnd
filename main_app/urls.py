@@ -5,6 +5,9 @@ urlpatterns = [
     # all general paths:
     path('', views.home, name='home'),
     
+    # all authentication paths:
+    path('accounts/signup/', views.signup, name='signup'),
+
     # all paths related to categories:
     path('categories/', views.category_index, name="category_index"),
     path('categories/add_category/', views.add_category, name='add_category'),

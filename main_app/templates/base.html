@@ -24,13 +24,16 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavLightDropdown" aria-controls="navbarNavLighDropdown" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
                 </button>
+                
                 <!-- Navbar links -->
                 <div class="collapse navbar-collapse" id="navbarNavLightDropdown">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0 mx-2">
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
                         </li>
+                        
                         <!-- Dropdown navbar links -->
+                        {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarLightDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Expenses
@@ -64,16 +67,24 @@
                                 <li><a class="dropdown-item" href="{% url 'goal_index' %}">Manage goals</a></li>
                             </ul>
                         </li>
-                        <!-- Login / logout links -->
+
+                        <!-- Logout link/form -->
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Log in</a>
+                            <form method="post" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-dark">Log out</button>
+                            </form>
+                        </li>
+
+                        {% else %}
+                        <!-- Login / sign-up links -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Log in</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Sign Up</a>
+                            <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Log out</a>
-                        </li>
+                        {% endif %}
                   </ul>
                 </div>
             </div>

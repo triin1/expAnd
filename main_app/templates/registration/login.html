@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1>Log in</h1>
+
+    <!-- Log in url and form are built into django (url at: /accounts/login) -->
+    <form action="{% url 'login' %}" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="hidden" name="next" value="{{ next }}">
+        <button type="submit" class="btn btn-dark">Log in</button>
+      </form>
+
+{% endblock %}

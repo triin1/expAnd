@@ -6,7 +6,7 @@ from .models import Category, Subcategory, Expense, Budget, Income, Goal
 class CategoryForm(ModelForm):
     class Meta:
         model = Category
-        fields = '__all__'
+        fields = ['name']
 
 
 class SubcategoryForm(ModelForm):

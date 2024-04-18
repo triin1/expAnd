@@ -4,6 +4,7 @@
 #54B435
 #379237 */
 
+/* General page styles */
 * {
     font-family: "Rubik", sans-serif;
     font-style: normal;
@@ -19,10 +20,19 @@ body {
     background-color: #fffd8d;
 }
 
+
+/* Nav bar related styles */
 .nav-color {
     background-color: #03C03C;
 }
 
+.navbar-nav > li{
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+
+/* General main section related styles */
 main {
     padding: 6vmin 2vmin;
 }
@@ -31,7 +41,3 @@ p {
     font-family: Helvetica, sans-serif;
 }
 
-.navbar-nav > li{
-    padding-left: 10px;
-    padding-right: 10px;
-  }
