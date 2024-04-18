@@ -12,10 +12,15 @@ class CategoryForm(ModelForm):
 class SubcategoryForm(ModelForm):
     class Meta:
         model = Subcategory
-        fields = '__all__'
+        fields = ['category', 'name']
+
+    # Function for making category selection user specific:
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].queryset = Category.objects.filter(user=user)
 
 
-# Model for formatting date display on form:
+# Form for formatting date display on form:
 class DateInput(forms.DateInput):
     input_type = 'date'
 
@@ -29,9 +34,11 @@ class ExpenseForm(ModelForm):
         model = Expense
         fields = ['category', 'subcategory', 'expense_date', 'expense_amount', 'description']
 
-    # Function for implementing the calendar widget on form:
-    def __init__(self, *args, **kwargs):
+    # Function for making category and subcategory selections user specific and implementing the calendar widget on form:
+    def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['category'].queryset = Category.objects.filter(user=user)
+        self.fields['subcategory'].queryset = Subcategory.objects.filter(user=user)
         self.fields['expense_date'].widget = DateInput()
 
 
@@ -40,9 +47,10 @@ class BudgetForm(ModelForm):
         model = Budget
         fields = ['category', 'budget_date', 'budget_amount']
 
-    # Function for implementing the calendar widget on form:
-    def __init__(self, *args, **kwargs):
+    # Function for making category selections user specific and implementing the calendar widget on form:
+    def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['category'].queryset = Category.objects.filter(user=user)
         self.fields['budget_date'].widget = DateInput()
 
 
@@ -60,7 +68,7 @@ class IncomeForm(ModelForm):
 class GoalForm(ModelForm):
     class Meta:
         model = Goal
-        fields = '__all__'
+        fields = ['goal_amount', 'goal_date', 'description', 'amount_saved']
 
     # Function for implementing the calendar widget on form:
     def __init__(self, *args, **kwargs):

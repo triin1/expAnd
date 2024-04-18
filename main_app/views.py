@@ -39,13 +39,12 @@ def add_category(request):
     if category_form.is_valid():
         new_category = category_form.save(commit=False)
         new_category.user = request.user
-        # category_form.instance.user = request.user
         new_category.save()
     return redirect('category_index')
 
 @login_required
 def add_subcategory(request):
-    subcategory_form = SubcategoryForm(request.POST)
+    subcategory_form = SubcategoryForm(request.user, request.POST)
     if subcategory_form.is_valid():
         new_subcategory = subcategory_form.save(commit=False)
         new_subcategory.user = request.user
@@ -58,7 +57,7 @@ def add_subcategory(request):
 def category_index(request):
     categories = Category.objects.filter(user=request.user)
     category_form = CategoryForm()
-    subcategory_form = SubcategoryForm()
+    subcategory_form = SubcategoryForm(user=request.user)
     return render(request, 'categories/index.html', {
         'categories': categories,
         'category_form': category_form,
@@ -68,7 +67,7 @@ def category_index(request):
 
 class CategoryUpdate(LoginRequiredMixin, UpdateView):
     model = Category
-    fields = '__all__'
+    fields = ['name']
     success_url = '/categories/'
 
 
@@ -79,7 +78,7 @@ class CategoryDelete(LoginRequiredMixin, DeleteView):
 
 class SubcategoryUpdate(LoginRequiredMixin, UpdateView):
     model = Subcategory
-    fields = '__all__'
+    fields = ['category', 'name']
     success_url = '/categories/'
 
 
@@ -92,7 +91,7 @@ class SubcategoryDelete(LoginRequiredMixin, DeleteView):
 @login_required
 # Page to add a form for new expense to:
 def expenses_new(request):
-    expense_form = ExpenseForm()
+    expense_form = ExpenseForm(user=request.user)
     return render(request, 'expenses/new.html', {
         'expense_form': expense_form
     })
@@ -100,7 +99,7 @@ def expenses_new(request):
 
 @login_required
 def add_expense(request):
-    expense_form = ExpenseForm(request.POST)
+    expense_form = ExpenseForm(request.user, request.POST)
     if expense_form.is_valid():
         new_expense = expense_form.save(commit=False)
         new_expense.user = request.user
@@ -144,10 +143,10 @@ def summary_index(request):
 # All budget related views:
 @login_required
 def add_budget_amount(request):
-    budget_form = BudgetForm(request.POST)
+    budget_form = BudgetForm(request.user, request.POST)
     if budget_form.is_valid():
         new_budget_amount = budget_form.save(commit=False)
-        new_budget.user = request.user
+        new_budget_amount.user = request.user
         # budget_form.instance.user = request.user
         new_budget_amount.save()
     return redirect('budget_index')
@@ -156,7 +155,7 @@ def add_budget_amount(request):
 @login_required
 def budget_index(request):
     budget = Budget.objects.filter(user=request.user)
-    budget_form = BudgetForm()
+    budget_form = BudgetForm(user=request.user)
 
     # Defining the first day and the last day of the current month.
     first_day = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -178,7 +177,7 @@ def budget_index(request):
 
 class BudgetUpdate(LoginRequiredMixin, UpdateView):
     model = Budget
-    fields = '__all__'
+    fields = ['category', 'budget_date', 'budget_amount']
     success_url = '/budget/'
 
 
@@ -203,7 +202,7 @@ def add_income(request):
     income_form = IncomeForm(request.POST)
     if income_form.is_valid():
         new_income_amount = income_form.save(commit=False)
-        new_income.user = request.user
+        new_income_amount.user = request.user
         # income_form.instance.user = request.user
         new_income_amount.save()
     return redirect('income_index')
@@ -220,7 +219,7 @@ def income_index(request):
 
 class IncomeUpdate(LoginRequiredMixin, UpdateView):
     model = Income
-    fields = '__all__'
+    fields = ['income_date', 'income_amount', 'description']
     success_url = '/income/'
 
 
@@ -262,7 +261,7 @@ def goal_index(request):
 
 class GoalUpdate(LoginRequiredMixin, UpdateView):
     model = Goal
-    fields = '__all__'
+    fields = ['goal_amount', 'goal_date', 'description', 'amount_saved']
     success_url = '/goals/'
 
 
