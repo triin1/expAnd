@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.db.models import Sum, F
-from django.db.models.functions import TruncMonth
+from django.db.models.functions import TruncMonth, TruncYear
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.contrib.auth import login
@@ -11,7 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Expense, Category, Subcategory, Budget, Income, Goal
 from .forms import CategoryForm, SubcategoryForm, ExpenseForm, BudgetForm, IncomeForm, GoalForm
-from .utils import get_plot
+from .utils import get_plot, get_bar
 
 
 # All general and authentication related views:
@@ -134,15 +134,29 @@ def summary_index(request):
     # Calculate total expenses by category and by month and order the expenses by month with most recent at the top:
     total_expenses = Expense.objects.filter(user=request.user).annotate(month=TruncMonth('expense_date'), category_name=F('category__name')).order_by('-month').values('month', 'category_name').annotate(total_expenses=Sum('expense_amount'))
 
-    # Extracting necessary data out of total_expenses queryset 
+    # Extracting necessary data out of total_expenses queryset (making them into lists) [TODO - delete the items that end up not being used]
     category_names = [item['category_name'] for item in total_expenses]
     totals = [float(item['total_expenses']) for item in total_expenses]
-    print(totals)
+    # months = [item['month'] for item in total_expenses]
+    # month_year = [f"{date.month} - {date.year}" for date in months]
+    # unique_month_year = list(set(month_year))
 
-    # An attempt to create a chart
-    x = category_names
-    y = totals
-    chart = get_plot(x, y)
+    # Creating a total expenses per month bar chart
+    expense_by_month = expenses.annotate(month=TruncMonth('expense_date'), year=TruncYear('expense_date')).values('month', 'year').order_by('month').annotate(expense_by_month=Sum('expense_amount'))
+    expenses_by_month = [float(item['expense_by_month']) for item in expense_by_month]
+    months = [item['month'] for item in expense_by_month]
+    month_year = [date.strftime('%b-%y') for date in months]
+
+    # sum_expenses = Expense.objects.filter(user=request.user).aggregate(Sum('expense_amount'))['expense_amount__sum']
+
+    # Attempts to create charts [TODO - delete after you've taken info you need]
+    x = month_year
+    y = expenses_by_month
+    chart = get_bar(x, y)
+    
+    # x = [x.expense_amount.amount for x in expenses]
+    # y = [y.expense_amount.amount for y in expenses]
+    # chart = get_scatter(x, y)
 
     return render(request, 'expenses/summary.html', {
         'expenses': expenses,
@@ -167,7 +181,9 @@ def budget_index(request):
     budget = Budget.objects.filter(user=request.user)
     budget_form = BudgetForm(user=request.user)
 
-    # Defining the first day and the last day of the current month.
+    expenses = Expense.objects.filter(user=request.user)
+
+    # Defining the first day and the last day of the current month:
     first_day = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     first_day_next_month = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0) + timedelta(days=32)
     first_day_next_month = first_day_next_month.replace(day=1)
@@ -175,13 +191,21 @@ def budget_index(request):
 
     # Calculating the current month's budget amounts by category. The annotate defines calculation parameters of month and category name
     # and sums up the budget amounts based on these parameters. Filter uses first and last day of the month to filter out the sums by
-    # category only for the current month.
+    # category only for the current month:
     current_budget = Budget.objects.filter(user=request.user).annotate(month=TruncMonth('budget_date'), category_name=F('category__name')).values('month', 'category_name').annotate(current_budget=Sum('budget_amount')).filter(budget_date__gte=first_day, budget_date__lte=last_day)
+
+    # Perform the same calculation as above, but for current month's expenses:
+    current_expenses = Expense.objects.filter(user=request.user).annotate(month=TruncMonth('expense_date'), category_name=F('category__name')).values('month', 'category_name').annotate(current_expenses=Sum('expense_amount')).filter(expense_date__gte=first_day, expense_date__lte=last_day)
+
+    # Calculating the difference between the budget and expenses in the current month:
+    budget_delta = [float(item['current_budget']) for item in current_budget]
+    expense_delta = [float(item['current_expenses']) for item in current_expenses]
+    current_delta = [budget_delta[i] - expense_delta[i] for i in range(min(len(budget_delta), len(expense_delta)))]
 
     return render(request, 'budget/index.html', {
         'budget_form': budget_form,
         'budget': budget,
-        'current_budget': current_budget,
+        'current_data': zip(current_budget, current_expenses, current_delta)
     })
 
 

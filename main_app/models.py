@@ -29,7 +29,7 @@ class Subcategory(models.Model):
 
 class Expense(models.Model):
     expense_date = models.DateField()
-    expense_amount = MoneyField(max_digits=14, decimal_places=2, default_currency='AUD', default='0')
+    expense_amount = MoneyField(max_digits=14, decimal_places=2, default_currency='AUD')
     description = models.TextField(max_length=256, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     subcategory = models.ForeignKey(Subcategory, on_delete=models.CASCADE, null=True, blank=True)
@@ -42,7 +42,7 @@ class Expense(models.Model):
 
 class Budget(models.Model):
     budget_date = models.DateField()
-    budget_amount = MoneyField(max_digits=14, decimal_places=2, default_currency='AUD', default='0')
+    budget_amount = MoneyField(max_digits=14, decimal_places=2, default_currency='AUD')
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -55,7 +55,7 @@ class Budget(models.Model):
 
 class Income(models.Model):
     income_date = models.DateField()
-    income_amount = MoneyField(max_digits=14, decimal_places=2, default_currency='AUD', default='0')
+    income_amount = MoneyField(max_digits=14, decimal_places=2, default_currency='AUD')
     description = models.CharField(max_length=256)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -68,7 +68,7 @@ class Income(models.Model):
 
 class Goal(models.Model):
     name = models.CharField(max_length=256)
-    goal_amount = MoneyField(max_digits=14, decimal_places=2, default_currency='AUD', default='0')
+    goal_amount = MoneyField(max_digits=14, decimal_places=2, default_currency='AUD')
     goal_date = models.DateField('Goal target date', null=True, blank=True)
     description = models.TextField(max_length=256, blank=True)
     amount_saved = MoneyField(max_digits=14, decimal_places=2, default_currency='AUD', default='0', blank=True)

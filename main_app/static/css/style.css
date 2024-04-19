@@ -41,3 +41,10 @@ p {
     font-family: Helvetica, sans-serif;
 }
 
+.positive-amount {
+    color: green
+}
+
+.negative-amount {
+    color: red
+}

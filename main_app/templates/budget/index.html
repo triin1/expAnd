@@ -14,14 +14,27 @@
                     <thead class="table-dark">
                         <tr>
                             <th>Category</th>
-                            <th>Amount</th>
+                            <th>Budget</th>
+                            <th>Expenses</th>
+                            <th>Difference</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {% for b in current_budget %}
+                    {% for current_budget, current_expenses, current_delta in current_data %}
                         <tr>
-                            <td>{{ b.category_name }}</td>
-                            <td>{{ b.current_budget }}</td>
+                            <td>{{ current_budget.category_name }}</td>
+                            <td>{{ current_budget.current_budget }}</td>
+                            <td>{{ current_expenses.current_expenses }}</td>
+                            <td>  
+                                <!-- TODO - the color change is currently not working, come back to it later -->
+                                {% if current_delta > 0 %}
+                                <div class="positive-amount">
+                                {% else %}
+                                <div class="negative-amount">
+                                {% endif %}
+                                    {{ current_delta }}
+                                </div>
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -30,7 +43,7 @@
                 <hr>
 
                 <h4>Add a budget item</h4>
-                
+
                 <form action="{% url 'add_budget_amount' %}" method="post">
                     {% csrf_token %}
                     {{ budget_form.as_p }}
