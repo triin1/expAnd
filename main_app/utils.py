@@ -14,35 +14,62 @@ def get_graph():
     return graph
 
 
-# TODO - formatting for particular charts, get rid of the ones you end up not using:
-def get_plot(x,y):
-    plt.switch_backend('AGG')
-    plt.figure(figsize=(10,5))
-    plt.title('category expenses')
-    plt.plot(x,y)
-    plt.xticks(rotation=45)
-    plt.xlabel('category')
-    plt.ylabel('expense')
-    plt.tight_layout()
-    graph = get_graph()
-    return graph
-
-
-def get_scatter(x,y):
-    plt.switch_backend('AGG')
-    plt.figure(figsize=(5,5))
-    plt.scatter(x,y)
-    plt.tight_layout()
-    graph = get_graph()
-    return graph
-
-
-def get_bar(x,y):
+# Set up and formatting for particular charts:
+def get_plot_comparison(x1, y1, x2, y2, x3, y3):
     plt.switch_backend('AGG')
     plt.figure(figsize=(5,3))
-    plt.title('Monthy spend')
-    plt.bar(x,y)
+    plt.title('Spending versus income and budget by month')
+    plt.plot(x1, y1, c='#F0FF42', label='Expenses')
+    plt.plot(x2, y2, c='#82CD47', label='Income')
+    plt.plot(x3, y3, c='#54B435', label='Budget')
+    plt.xlabel('Month')
+    plt.ylabel('A$')
+    plt.legend(loc="center left", bbox_to_anchor=(1, 0.5), fontsize = 6)
+    plt.tight_layout()
+    graph = get_graph()
+    return graph
+
+
+# def get_plot_daily(x1, y1):
+#     plt.switch_backend('AGG')
+#     plt.figure(figsize=(5,3))
+#     plt.title('Average daily spend')
+#     plt.plot(x1, y1, c='#03C03C')
+#     plt.xlabel('Day')
+#     plt.xticks(rotation=90)
+#     plt.ylabel('A$')
+#     plt.tight_layout()
+#     graph = get_graph()
+#     return graph
+
+
+def get_bar_total(x,y):
+    plt.switch_backend('AGG')
+    plt.figure(figsize=(5,3))
+    plt.title('Total monthy spend')
+    plt.bar(x, y, color="#03C03C")
     plt.ylabel('Expense amount (A$)')
+    plt.tight_layout()
+    graph = get_graph()
+    return graph
+
+
+def get_bar_average(x,y):
+    plt.switch_backend('AGG')
+    plt.figure(figsize=(5,3))
+    plt.title('Average monthly spend')
+    plt.bar(x, y, color="#03C03C")
+    plt.ylabel('Expense amount (A$)')
+    plt.tight_layout()
+    graph = get_graph()
+    return graph
+
+
+def get_pie_current_expenses(x,y):
+    plt.switch_backend('AGG')
+    plt.figure(figsize=(3,3))
+    plt.title('Current month spend by category')
+    plt.pie(x, labels=y, textprops={'fontsize': 7}, colors=['#F0FF42', '#82CD47', '#54B435', '#379237', '#ffdfba', '#ffb3ba', '#bae1ff'], autopct="%.0f%%", pctdistance=0.8)
     plt.tight_layout()
     graph = get_graph()
     return graph

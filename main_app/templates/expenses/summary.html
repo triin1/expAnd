@@ -2,10 +2,22 @@
 
 {% block content %}
 
-    {% if chart %}
-        <img src="data:image/png;base64, {{ chart|safe }}">
+    {% if chart_bar_total_expenses %}
+        <img src="data:image/png;base64, {{ chart_bar_total_expenses|safe }}">
     {% endif %}
     
+    {% if chart_pie_current_expenses %}
+        <img src="data:image/png;base64, {{ chart_pie_current_expenses|safe }}">
+    {% endif %}
+
+    {% if chart_plot_comparison %}
+        <img src="data:image/png;base64, {{ chart_plot_comparison|safe }}">
+    {% endif %} 
+
+    {% if chart_bar_average_expenses %}
+        <img src="data:image/png;base64, {{ chart_bar_average_expenses|safe }}">
+    {% endif %} 
+
     <h1>Monthly expense summary</h1>
 
     <table class="table table-hover">
