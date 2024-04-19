@@ -30,17 +30,16 @@ def get_plot_comparison(x1, y1, x2, y2, x3, y3):
     return graph
 
 
-# def get_plot_daily(x1, y1):
-#     plt.switch_backend('AGG')
-#     plt.figure(figsize=(5,3))
-#     plt.title('Average daily spend')
-#     plt.plot(x1, y1, c='#03C03C')
-#     plt.xlabel('Day')
-#     plt.xticks(rotation=90)
-#     plt.ylabel('A$')
-#     plt.tight_layout()
-#     graph = get_graph()
-#     return graph
+def get_bar_daily(x1, y1):
+    plt.switch_backend('AGG')
+    plt.figure(figsize=(7,3))
+    plt.title('Daily spend')
+    plt.bar(x1, y1, color='#03C03C')
+    plt.xlabel('Day')
+    plt.ylabel('A$')
+    plt.tight_layout()
+    graph = get_graph()
+    return graph
 
 
 def get_bar_total(x,y):

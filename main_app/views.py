@@ -11,7 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Expense, Category, Subcategory, Budget, Income, Goal
 from .forms import CategoryForm, SubcategoryForm, ExpenseForm, BudgetForm, IncomeForm, GoalForm
-from .utils import get_plot_comparison, get_bar_total, get_pie_current_expenses, get_bar_average
+from .utils import get_plot_comparison, get_bar_total, get_pie_current_expenses, get_bar_average, get_bar_daily
 
 
 # All general and authentication related views:
@@ -130,17 +130,18 @@ class ExpenseDelete(LoginRequiredMixin, DeleteView):
 @login_required
 def summary_index(request):
     # Querying all necessary data for the page:
-    xpenses = Expense.objects.filter(user=request.user)
+    expenses = Expense.objects.filter(user=request.user)
     budget = Budget.objects.filter(user=request.user)
     income = Income.objects.filter(user=request.user)
 
-    # Calculating and extracting data for the bar chart on total expenses per month:
+    # Calculating data for the bar chart on total expenses per month:
     expense_by_month = expenses.annotate(month=TruncMonth('expense_date'), year=TruncYear('expense_date')).values('month', 'year').order_by('month').annotate(expense_by_month=Sum('expense_amount'))
+    # Creating lists of calculated data to use for charting:
     expenses_by_month = [float(item['expense_by_month']) for item in expense_by_month]
     months = [item['month'] for item in expense_by_month]
+    # Converting date (month and year) into string:
     month_year = [date.strftime('%b-%y') for date in months]
-
-    # Creating a total expenses per month bar chart:
+    # Creating the total expenses per month bar chart:
     x = month_year
     y = expenses_by_month
     chart_bar_total_expenses = get_bar_total(x, y)
@@ -150,28 +151,27 @@ def summary_index(request):
     first_day_next_month = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0) + timedelta(days=32)
     first_day_next_month = first_day_next_month.replace(day=1)
     last_day = first_day_next_month - timedelta(days=1)
-
-    # Calculating current month's expenses by category and extract necessary data out of that calculation for pie chart:
+    # Calculating current month's expenses by category and converting necessary data out of that calculation into lists to use for pie chart:
     current_expenses = expenses.annotate(month=TruncMonth('expense_date'), category_name=F('category__name')).values('month', 'category_name').annotate(current_expenses=Sum('expense_amount')).filter(expense_date__gte=first_day, expense_date__lte=last_day)
     category_names = [item['category_name'] for item in current_expenses]
     totals = [float(item['current_expenses']) for item in current_expenses]
-
-    # Creating a total expenses per current month pie chart:
+    # Creating the total expenses by category per current month pie chart:
     x = totals
     y = category_names
     chart_pie_current_expenses = get_pie_current_expenses(x, y)
 
-    # Calculating and extracting budget and income data for the line chart on total expenses versus income and budget per month:
+    # Calculating budget and income data for the line chart on total expenses versus income and budget per month:
     monthly_income = income.annotate(month=TruncMonth('income_date'), year=TruncYear('income_date')).values('month', 'year').order_by('month').annotate(monthly_income=Sum('income_amount'))
     monthly_budget = budget.annotate(month=TruncMonth('budget_date'), year=TruncYear('budget_date')).values('month', 'year').order_by('month').annotate(monthly_budget=Sum('budget_amount'))
+    # Creating lists out of necessary data for plotting on the chart:
     monthly_incomes = [float(item['monthly_income']) for item in monthly_income]
     monthly_budgets = [float(item['monthly_budget']) for item in monthly_budget]
     months_income = [item['month'] for item in monthly_income]
     months_budget = [item['month'] for item in monthly_budget]
+    # Converting dates (month and year) into strings:
     month_year_income = [date.strftime('%b-%y') for date in months_income]
     month_year_budget = [date.strftime('%b-%y') for date in months_budget]
-
-    # # Creating a line chart on total expenses versus income and budget per month:
+    # # Creating the line chart on total expenses versus income and budget per month:
     x1 = month_year
     x2 = month_year_income
     x3 = month_year_budget
@@ -180,46 +180,39 @@ def summary_index(request):
     y3 = monthly_budgets
     chart_plot_comparison = get_plot_comparison(x1, y1, x2, y2, x3, y3)
 
-    # Monthly average spend - calculating and extracting data for the bar chart:
+    # Monthly average spend - calculating and making data lists for the bar chart:
     monthly_average_expense = expenses.annotate(month=TruncMonth('expense_date')).values('month').order_by('month').annotate(average_by_month=Avg('expense_amount'))
     monthly_average_expenses = [float(item['average_by_month']) for item in monthly_average_expense]
     months_average = [item['month'] for item in monthly_average_expense]
     month_year_average = [date.strftime('%b-%y') for date in months_average]
-
     # Creating the average expenses per month bar chart:
     x = month_year_average
     y = monthly_average_expenses
     chart_bar_average_expenses = get_bar_average(x, y)
 
-    # Calculating total expenses by category and by month and order the expenses by month with most recent at the top:
+    # Calculate daily total expense amounts
+    daily_totals = expenses.values('expense_date').order_by('expense_date').annotate(daily_totals=Sum('expense_amount'))
+    # Extract daily total expense amounts and dates into two lists and then merge them into one dictionary
+    dates = [item['expense_date'] for item in daily_totals]
+    daily_total = [float(item['daily_totals']) for item in daily_totals]
+    daily_total_dictionary = {dates[i]: daily_total[i] for i in range(len(dates))}
+    # Enter missing dates to the dataset with zero values:
+    start_date = min(daily_total_dictionary.keys())
+    end_date = max(daily_total_dictionary.keys())
+    date_range = [start_date + timedelta(days=x) for x in range((end_date - start_date).days + 1)]
+    for date in date_range:
+        if date not in daily_total_dictionary:
+            daily_total_dictionary[date] = 0
+    # Break the dictionary into two lists that can be charted:
+    days_chart = list(daily_total_dictionary.keys())
+    daily_expenses_chart = list(daily_total_dictionary.values())
+    # Create the daily expenses chart:
+    x1 = days_chart
+    y1 = daily_expenses_chart
+    chart_daily = get_bar_daily(x1, y1)
+
+    # Calculating total expenses by category and by month and order the expenses by month with most recent at the top (diaplayed as a table on the page):
     total_expenses = expenses.annotate(month=TruncMonth('expense_date'), category_name=F('category__name')).order_by('-month').values('month', 'category_name').annotate(total_expenses=Sum('expense_amount'))
-
-    # Extracting necessary data out of total_expenses queryset (making them into lists) [TODO - delete the items that end up not being used]
-    # category_names = [item['category_name'] for item in total_expenses]
-    # totals = [float(item['total_expenses']) for item in total_expenses]
-    # months = [item['month'] for item in total_expenses]
-    # month_year = [f"{date.month} - {date.year}" for date in months]
-    # unique_month_year = list(set(month_year))
-
-    # sum_expenses = Expense.objects.filter(user=request.user).aggregate(Sum('expense_amount'))['expense_amount__sum']
-
-    # Parked for the daily total calculations:
-    # days = [date.expense_date for date in expenses]
-    # individual_expense_amounts = [float(item.expense_amount.amount) for item in expenses]
-    
-
-
-
-    # averages = expenses.values('expense_date').order_by('expense_date').annotate(daily_average=Avg('expense_amount', default = 0))
-    # daily_average = [float(item['daily_average']) for item in averages]
-    # days = [item['expense_date'] for item in averages]
-    # days_string = [date.strftime('%d-%m-%y') for date in days]
-    # print(days_string)
-
-    # x1 = days_string
-    # y1 = daily_average
-    # chart_daily_average = get_plot_daily(x1, y1)
-
 
     return render(request, 'expenses/summary.html', {
         'expenses': expenses,
@@ -227,7 +220,8 @@ def summary_index(request):
         'chart_bar_total_expenses': chart_bar_total_expenses,
         'chart_pie_current_expenses': chart_pie_current_expenses,
         'chart_plot_comparison': chart_plot_comparison,
-        'chart_bar_average_expenses': chart_bar_average_expenses, 
+        'chart_bar_average_expenses': chart_bar_average_expenses,
+        'chart_daily': chart_daily, 
     })
 
 
