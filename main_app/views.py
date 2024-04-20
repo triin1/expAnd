@@ -27,36 +27,21 @@ def home(request):
     budget = Budget.objects.filter(user=request.user)
     income = Income.objects.filter(user=request.user)
 
-    # Simpler version of the total current month expenses, income and budget chart:
-    # today = datetime.now()
-    # this_month_expenses = expenses.filter(expense_date__month=today.month).aggregate(current_month=Sum('expense_amount'))
-    # total_this_month_expenses = float(this_month_expenses['current_month'])
-    # this_month_budget = budget.filter(budget_date__month=today.month).aggregate(current_month=Sum('budget_amount'))
-    # total_this_month_budget = float(this_month_budget['current_month'])
-    # this_month_income = income.filter(income_date__month=today.month).aggregate(current_month=Sum('income_amount'))
-    # total_this_month_income = float(this_month_income['current_month'])
-
-    # Defining the first day and the last day of the current month:
-    first_day = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    first_day_next_month = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0) + timedelta(days=32)
-    first_day_next_month = first_day_next_month.replace(day=1)
-    last_day = first_day_next_month - timedelta(days=1)
-    # Calculating current month's expenses and converting necessary data out of that calculation into list to use for bar chart:
-    current_expenses = expenses.annotate(month=TruncMonth('expense_date')).values('month').annotate(current_expenses=Sum('expense_amount')).filter(expense_date__gte=first_day, expense_date__lte=last_day)
-    total_current_expenses = [float(item['current_expenses']) for item in current_expenses]
-    # Calculating current month's budget and converting necessary data out of that calculation into list to use for bar chart:
-    current_budget = budget.annotate(month=TruncMonth('budget_date')).values('month').annotate(current_budget=Sum('budget_amount')).filter(budget_date__gte=first_day, budget_date__lte=last_day)
-    total_current_budget = [float(item['current_budget']) for item in current_budget]
-    # Calculating current month's income and converting necessary data out of that calculation into list to use for bar chart:
-    current_income = income.annotate(month=TruncMonth('income_date')).values('month').annotate(current_income=Sum('income_amount')).filter(income_date__gte=first_day, income_date__lte=last_day)
-    total_current_income = [float(item['current_income']) for item in current_income]
+    # Calculating total expenses, budget and income for the current month: 
+    today = datetime.now()
+    this_month_expenses = expenses.filter(expense_date__month=today.month).aggregate(current_month=Sum('expense_amount'))
+    total_this_month_expenses = float(this_month_expenses['current_month'])
+    this_month_budget = budget.filter(budget_date__month=today.month).aggregate(current_month=Sum('budget_amount'))
+    total_this_month_budget = float(this_month_budget['current_month'])
+    this_month_income = income.filter(income_date__month=today.month).aggregate(current_month=Sum('income_amount'))
+    total_this_month_income = float(this_month_income['current_month'])
     # Creating the total expenses, budget and income per current month bar chart:
     x1 = "Expenses"
-    y1 = total_current_expenses # total_this_month_expenses
+    y1 = total_this_month_expenses
     x2 = "Budget"
-    y2 = total_current_budget # total_this_month_budget
+    y2 = total_this_month_budget
     x3 = "Income"
-    y3 = total_current_income # total_this_month_income
+    y3 = total_this_month_income
     chart_bar_home_month = get_bar_homemonth(x1, y1, x2, y2, x3, y3)
 
     # Calculating total expenses, budget and income for the current year: 
@@ -292,13 +277,15 @@ def summary_index(request):
     # Enter missing dates to the dataset with zero values:
     start_date = min(daily_total_dictionary.keys())
     end_date = max(daily_total_dictionary.keys())
-    date_range = [start_date + timedelta(days=x) for x in range((end_date - start_date).days + 1)]
+    print(end_date)
+    date_range = [start_date + timedelta(days=x) for x in range((end_date - start_date).days)]
+    date_range.append(end_date)
     for date in date_range:
         if date not in daily_total_dictionary:
             daily_total_dictionary[date] = 0
     # Break the dictionary into two lists that can be charted:
     days_chart = list(daily_total_dictionary.keys())
-    daily_expenses_chart = list(daily_total_dictionary.values())
+    daily_expenses_chart = [daily_total_dictionary[key] for key in days_chart]
     # Create the daily expenses chart:
     x1 = days_chart
     y1 = daily_expenses_chart
@@ -340,24 +327,43 @@ def budget_index(request):
     first_day_next_month = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0) + timedelta(days=32)
     first_day_next_month = first_day_next_month.replace(day=1)
     last_day = first_day_next_month - timedelta(days=1)
-
     # Calculating the current month's budget amounts by category. The annotate defines calculation parameters of month and category name
     # and sums up the budget amounts based on these parameters. Filter uses first and last day of the month to filter out the sums by
     # category only for the current month:
     current_budget = budget.annotate(month=TruncMonth('budget_date'), category_name=F('category__name')).values('month', 'category_name').annotate(current_budget=Sum('budget_amount')).filter(budget_date__gte=first_day, budget_date__lte=last_day)
-
     # Perform the same calculation as above, but for current month's expenses:
     current_expenses = expenses.annotate(month=TruncMonth('expense_date'), category_name=F('category__name')).values('month', 'category_name').annotate(current_expenses=Sum('expense_amount')).filter(expense_date__gte=first_day, expense_date__lte=last_day)
-
+    # Extract values as lists out of the above calculations:
+    budget_values = [float(item['current_budget']) for item in current_budget]
+    budget_categories = [item['category_name'] for item in current_budget]
+    expense_values = [float(item['current_expenses']) for item in current_expenses]
+    expense_categories = [item['category_name'] for item in current_expenses]
+    # Create dictionaries with key as category name and value as amount per category:
+    current_budget_dictionary = {budget_categories[i]: budget_values[i] for i in range(len(budget_categories))}
+    current_expenses_dictionary = {expense_categories[i]: expense_values[i] for i in range(len(expense_categories))}
+    # Merge category lists. N.B. it does not include full list of all values, it is compiled to get the full list of categories only
+    merged_categories = {**current_budget_dictionary, **current_expenses_dictionary}  
+    # Fill in any data gaps in the two datasets by inserting zero values for the categories that don't have any data: 
+    for category in merged_categories:
+        if category not in current_budget_dictionary:
+            current_budget_dictionary[category] = 0
+        if category not in current_expenses_dictionary:
+            current_expenses_dictionary[category] = 0
+    # Sort dictionaries alphabethically:
+    sorted_current_budget = {key: current_budget_dictionary[key] for key in sorted(current_budget_dictionary)}
+    sorted_current_expenses = {key: current_expenses_dictionary[key] for key in sorted(current_expenses_dictionary)}
+    # Break the dictionaries into lists. N.B keys maintain the original dictionary order when put into a list; however, the values don't, so different methods have to be used for the keys and values when preparing lists:
+    sorted_budget_categories_only = list(sorted_current_budget.keys())
+    sorted_expenses_categories_only = list(sorted_current_expenses.keys())
+    sorted_budget_values_only =[current_budget_dictionary[key] for key in sorted_budget_categories_only] 
+    sorted_expenses_values_only =[current_expenses_dictionary[key] for key in sorted_expenses_categories_only] 
     # Calculating the difference between the budget and expenses in the current month:
-    budget_delta = [float(item['current_budget']) for item in current_budget]
-    expense_delta = [float(item['current_expenses']) for item in current_expenses]
-    current_delta = [budget_delta[i] - expense_delta[i] for i in range(min(len(budget_delta), len(expense_delta)))]
+    current_delta = [sorted_budget_values_only[i] - sorted_expenses_values_only[i] for i in range(min(len(sorted_budget_values_only), len(sorted_expenses_values_only)))]
 
     return render(request, 'budget/index.html', {
         'budget_form': budget_form,
         'budget': budget,
-        'current_data': zip(current_budget, current_expenses, current_delta)
+        'current_data': zip(sorted_budget_categories_only, sorted_budget_values_only, sorted_expenses_values_only, current_delta)
     })
 
 

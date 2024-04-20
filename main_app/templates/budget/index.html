@@ -20,21 +20,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                    {% for current_budget, current_expenses, current_delta in current_data %}
+                                                
+                    {% for sorted_budget_categories_only, sorted_budget_values_only, sorted_expenses_values_only, current_delta in current_data %}
                         <tr>
-                            <td>{{ current_budget.category_name }}</td>
-                            <td>{{ current_budget.current_budget }}</td>
-                            <td>{{ current_expenses.current_expenses }}</td>
-                            <td>  
-                                <!-- TODO - the color change is currently not working, come back to it later -->
-                                {% if current_delta > 0 %}
-                                <div class="positive-amount">
-                                {% else %}
-                                <div class="negative-amount">
-                                {% endif %}
-                                    {{ current_delta }}
-                                </div>
-                            </td>
+                            <td>{{ sorted_budget_categories_only }}</td>
+                            <td>{{ sorted_budget_values_only }}</td>
+                            <td>{{ sorted_expenses_values_only }}</td>
+                            <td>{{ current_delta }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
