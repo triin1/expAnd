@@ -4,7 +4,12 @@
 
 <h1>Content coming soon</h1>
 
-<p>block of text</p>
-<p>block of text</p>
+    {% if chart_bar_home_month %}
+        <img src="data:image/png;base64, {{ chart_bar_home_month|safe }}">
+    {% endif %}
+
+    {% if chart_bar_home_year %}
+        <img src="data:image/png;base64, {{ chart_bar_home_year|safe }}">
+    {% endif %}
 
 {% endblock %}

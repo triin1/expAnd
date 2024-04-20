@@ -30,18 +30,6 @@ def get_plot_comparison(x1, y1, x2, y2, x3, y3):
     return graph
 
 
-def get_bar_daily(x1, y1):
-    plt.switch_backend('AGG')
-    plt.figure(figsize=(7,3))
-    plt.title('Daily spend')
-    plt.bar(x1, y1, color='#03C03C')
-    plt.xlabel('Day')
-    plt.ylabel('A$')
-    plt.tight_layout()
-    graph = get_graph()
-    return graph
-
-
 def get_bar_total(x,y):
     plt.switch_backend('AGG')
     plt.figure(figsize=(5,3))
@@ -59,6 +47,44 @@ def get_bar_average(x,y):
     plt.title('Average monthly spend')
     plt.bar(x, y, color="#03C03C")
     plt.ylabel('Expense amount (A$)')
+    plt.tight_layout()
+    graph = get_graph()
+    return graph
+
+
+def get_bar_daily(x1, y1):
+    plt.switch_backend('AGG')
+    plt.figure(figsize=(7,3))
+    plt.title('Daily spend')
+    plt.bar(x1, y1, color='#03C03C')
+    plt.xlabel('Day')
+    plt.ylabel('A$')
+    plt.tight_layout()
+    graph = get_graph()
+    return graph
+
+
+def get_bar_homemonth(x1, y1, x2, y2, x3, y3):
+    plt.switch_backend('AGG')
+    plt.figure(figsize=(5,3))
+    plt.title("Current month's expense, budget and income")
+    plt.bar(x1, y1, color='#03C03C')
+    plt.bar(x2, y2, color='#03C03C')
+    plt.bar(x3, y3, color='#03C03C')
+    plt.ylabel('A$')
+    plt.tight_layout()
+    graph = get_graph()
+    return graph
+
+
+def get_bar_homeyear(x1, y1, x2, y2, x3, y3):
+    plt.switch_backend('AGG')
+    plt.figure(figsize=(5,3))
+    plt.title("Current year's expense, budget and income")
+    plt.bar(x1, y1, color='#03C03C')
+    plt.bar(x2, y2, color='#03C03C')
+    plt.bar(x3, y3, color='#03C03C')
+    plt.ylabel('A$')
     plt.tight_layout()
     graph = get_graph()
     return graph

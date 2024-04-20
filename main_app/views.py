@@ -11,12 +11,69 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Expense, Category, Subcategory, Budget, Income, Goal
 from .forms import CategoryForm, SubcategoryForm, ExpenseForm, BudgetForm, IncomeForm, GoalForm
-from .utils import get_plot_comparison, get_bar_total, get_pie_current_expenses, get_bar_average, get_bar_daily
+from .utils import get_plot_comparison, get_bar_total, get_pie_current_expenses, get_bar_average, get_bar_daily, get_bar_homemonth, get_bar_homeyear
 
 
 # All general and authentication related views:
 def home(request):
-    return render(request, 'home.html')
+    # Querying all necessary data for the page:
+    expenses = Expense.objects.filter(user=request.user)
+    budget = Budget.objects.filter(user=request.user)
+    income = Income.objects.filter(user=request.user)
+
+    # Simpler version of the total current month expenses, income and budget chart:
+    # today = datetime.now()
+    # this_month_expenses = expenses.filter(expense_date__month=today.month).aggregate(current_month=Sum('expense_amount'))
+    # total_this_month_expenses = float(this_month_expenses['current_month'])
+    # this_month_budget = budget.filter(budget_date__month=today.month).aggregate(current_month=Sum('budget_amount'))
+    # total_this_month_budget = float(this_month_budget['current_month'])
+    # this_month_income = income.filter(income_date__month=today.month).aggregate(current_month=Sum('income_amount'))
+    # total_this_month_income = float(this_month_income['current_month'])
+
+    # Defining the first day and the last day of the current month:
+    first_day = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    first_day_next_month = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0) + timedelta(days=32)
+    first_day_next_month = first_day_next_month.replace(day=1)
+    last_day = first_day_next_month - timedelta(days=1)
+    # Calculating current month's expenses and converting necessary data out of that calculation into list to use for bar chart:
+    current_expenses = expenses.annotate(month=TruncMonth('expense_date')).values('month').annotate(current_expenses=Sum('expense_amount')).filter(expense_date__gte=first_day, expense_date__lte=last_day)
+    total_current_expenses = [float(item['current_expenses']) for item in current_expenses]
+    # Calculating current month's budget and converting necessary data out of that calculation into list to use for bar chart:
+    current_budget = budget.annotate(month=TruncMonth('budget_date')).values('month').annotate(current_budget=Sum('budget_amount')).filter(budget_date__gte=first_day, budget_date__lte=last_day)
+    total_current_budget = [float(item['current_budget']) for item in current_budget]
+    # Calculating current month's income and converting necessary data out of that calculation into list to use for bar chart:
+    current_income = income.annotate(month=TruncMonth('income_date')).values('month').annotate(current_income=Sum('income_amount')).filter(income_date__gte=first_day, income_date__lte=last_day)
+    total_current_income = [float(item['current_income']) for item in current_income]
+    # Creating the total expenses, budget and income per current month bar chart:
+    x1 = "Expenses"
+    y1 = total_current_expenses # total_this_month_expenses
+    x2 = "Budget"
+    y2 = total_current_budget # total_this_month_budget
+    x3 = "Income"
+    y3 = total_current_income # total_this_month_income
+    chart_bar_home_month = get_bar_homemonth(x1, y1, x2, y2, x3, y3)
+
+    # Calculating total expenses, budget and income for the current year: 
+    # today = datetime.now()
+    this_year_expenses = expenses.filter(expense_date__year=today.year).aggregate(current_year=Sum('expense_amount'))
+    total_this_year_expenses = float(this_year_expenses['current_year'])
+    this_year_budget = budget.filter(budget_date__year=today.year).aggregate(current_year=Sum('budget_amount'))
+    total_this_year_budget = float(this_year_budget['current_year'])
+    this_year_income = income.filter(income_date__year=today.year).aggregate(current_year=Sum('income_amount'))
+    total_this_year_income = float(this_year_income['current_year'])
+    # Creating the total expenses, budget and income per current month bar chart:
+    x1 = "Expenses"
+    y1 = total_this_year_expenses
+    x2 = "Budget"
+    y2 = total_this_year_budget
+    x3 = "Income"
+    y3 = total_this_year_income
+    chart_bar_home_year = get_bar_homeyear(x1, y1, x2, y2, x3, y3)
+
+    return render(request, 'home.html', {
+        'chart_bar_home_month': chart_bar_home_month,
+        'chart_bar_home_year': chart_bar_home_year,
+    })
 
 
 def signup(request):
