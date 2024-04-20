@@ -22,7 +22,6 @@ def get_plot_comparison(x1, y1, x2, y2, x3, y3):
     plt.plot(x1, y1, c='#F0FF42', label='Expenses')
     plt.plot(x2, y2, c='#82CD47', label='Income')
     plt.plot(x3, y3, c='#54B435', label='Budget')
-    plt.xlabel('Month')
     plt.ylabel('A$')
     plt.legend(loc="center left", bbox_to_anchor=(1, 0.5), fontsize = 6)
     plt.tight_layout()
@@ -54,7 +53,7 @@ def get_bar_average(x,y):
 
 def get_bar_daily(x1, y1):
     plt.switch_backend('AGG')
-    plt.figure(figsize=(7,3))
+    plt.figure(figsize=(10,3))
     plt.title('Daily spend')
     plt.bar(x1, y1, color='#03C03C')
     plt.xlabel('Day')
@@ -92,7 +91,7 @@ def get_bar_homeyear(x1, y1, x2, y2, x3, y3):
 
 def get_pie_current_expenses(x,y):
     plt.switch_backend('AGG')
-    plt.figure(figsize=(3,3))
+    plt.figure(figsize=(5,3))
     plt.title('Current month spend by category')
     plt.pie(x, labels=y, textprops={'fontsize': 7}, colors=['#F0FF42', '#82CD47', '#54B435', '#379237', '#ffdfba', '#ffb3ba', '#bae1ff'], autopct="%.0f%%", pctdistance=0.8)
     plt.tight_layout()

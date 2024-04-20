@@ -4,6 +4,7 @@ from django.db.models import Sum, F, Avg
 from django.db.models.functions import TruncMonth, TruncYear
 from django.utils import timezone
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
@@ -208,12 +209,12 @@ def summary_index(request):
     y = expenses_by_month
     chart_bar_total_expenses = get_bar_total(x, y)
 
-    # Defining the first day and the last day of the current month:
+    # Define the first day and the last day of the current month:
     first_day = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     first_day_next_month = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0) + timedelta(days=32)
     first_day_next_month = first_day_next_month.replace(day=1)
     last_day = first_day_next_month - timedelta(days=1)
-    # Calculating current month's expenses by category and converting necessary data out of that calculation into lists to use for pie chart:
+    # Calculate current month's expenses by category and convert necessary data out of that calculation into lists to use for pie chart:
     current_expenses = expenses.annotate(month=TruncMonth('expense_date'), category_name=F('category__name')).values('month', 'category_name').annotate(current_expenses=Sum('expense_amount')).filter(expense_date__gte=first_day, expense_date__lte=last_day)
     category_names = [item['category_name'] for item in current_expenses]
     totals = [float(item['current_expenses']) for item in current_expenses]
@@ -222,24 +223,54 @@ def summary_index(request):
     y = category_names
     chart_pie_current_expenses = get_pie_current_expenses(x, y)
 
-    # Calculating budget and income data for the line chart on total expenses versus income and budget per month:
-    monthly_income = income.annotate(month=TruncMonth('income_date'), year=TruncYear('income_date')).values('month', 'year').order_by('month').annotate(monthly_income=Sum('income_amount'))
-    monthly_budget = budget.annotate(month=TruncMonth('budget_date'), year=TruncYear('budget_date')).values('month', 'year').order_by('month').annotate(monthly_budget=Sum('budget_amount'))
-    # Creating lists out of necessary data for plotting on the chart:
+    # Calculate budget and income data for the line chart on total expenses versus income and budget per month:
+    monthly_income = income.annotate(month=TruncMonth('income_date')).values('month').order_by('month').annotate(monthly_income=Sum('income_amount'))
+    monthly_budget = budget.annotate(month=TruncMonth('budget_date')).values('month').order_by('month').annotate(monthly_budget=Sum('budget_amount'))
+    # Create lists out of necessary data (expense data has already been prepared above):
     monthly_incomes = [float(item['monthly_income']) for item in monthly_income]
     monthly_budgets = [float(item['monthly_budget']) for item in monthly_budget]
     months_income = [item['month'] for item in monthly_income]
     months_budget = [item['month'] for item in monthly_budget]
-    # Converting dates (month and year) into strings:
-    month_year_income = [date.strftime('%b-%y') for date in months_income]
-    month_year_budget = [date.strftime('%b-%y') for date in months_budget]
-    # # Creating the line chart on total expenses versus income and budget per month:
-    x1 = month_year
-    x2 = month_year_income
-    x3 = month_year_budget
-    y1 = expenses_by_month
-    y2 = monthly_incomes
-    y3 = monthly_budgets
+    # Make dictionaries out of the data to get key value pairs where the date/month is the key and monthly amount it the value:
+    month_expense_dictionary = {months[i]: expenses_by_month[i] for i in range(len(months))}
+    month_budget_dictionary = {months_budget[i]: monthly_budgets[i] for i in range(len(months_budget))}
+    month_income_dictionary = {months_income[i]: monthly_incomes[i] for i in range(len(months_income))}
+    # Merge all dictionaries. N.B. it does not include full list of all values, it is compiled to get the full range of dates/months only 
+    merged_dictionary = {**month_budget_dictionary, **month_income_dictionary, **month_expense_dictionary}
+    # Based on the merged dictionaries, define the earliest and latest months that have any entries in any of the three datasets:
+    start_month = min(merged_dictionary.keys())
+    end_month = max(merged_dictionary.keys())
+    # Create a range based on the earliest and latest months that have data:
+    month_range = [start_month + relativedelta(months=x) for x in range((end_month.year - start_month.year) * 12 + end_month.month - start_month.month + 1)]
+    # Fill in any data gaps in all three datasets by inserting zero values for the months that don't have any data: 
+    for month in month_range:
+        if month not in month_budget_dictionary:
+            month_budget_dictionary[month] = 0
+        if month not in month_income_dictionary:
+            month_income_dictionary[month] = 0
+        if month not in month_expense_dictionary:
+            month_expense_dictionary[month] = 0
+    # Sort all three datasets based on dates/months:
+    sorted_month_expenses = {key: month_expense_dictionary[key] for key in sorted(month_expense_dictionary)}
+    sorted_month_income = {key: month_income_dictionary[key] for key in sorted(month_income_dictionary)}
+    sorted_month_budget = {key: month_budget_dictionary[key] for key in sorted(month_budget_dictionary)}
+    # Break the dictionaries into lists that can be charted. N.B keys maintain the original dictionary order when put into a list; however, the values don't, so different methods have to be used for the keys and values when preparing lists. Turn months into strings for chart presentation:
+    sorted_expenses_months_only = list(sorted_month_expenses.keys())
+    months_chart_expenses = [date.strftime('%b-%y') for date in sorted_expenses_months_only]
+    sorted_income_months_only = list(sorted_month_income.keys())
+    months_chart_income = [date.strftime('%b-%y') for date in sorted_income_months_only]
+    sorted_budget_months_only = list(sorted_month_budget.keys())
+    months_chart_budget = [date.strftime('%b-%y') for date in sorted_budget_months_only]
+    monthly_expenses_chart = [month_expense_dictionary[key] for key in sorted_expenses_months_only]
+    monthly_income_chart = [month_income_dictionary[key] for key in sorted_income_months_only]
+    monthly_budget_chart = [month_budget_dictionary[key] for key in sorted_budget_months_only]
+    # Create the line chart for total expenses versus income and budget per month:
+    x1 = months_chart_expenses
+    x2 = months_chart_income
+    x3 = months_chart_budget
+    y1 = monthly_expenses_chart
+    y2 = monthly_income_chart
+    y3 = monthly_budget_chart
     chart_plot_comparison = get_plot_comparison(x1, y1, x2, y2, x3, y3)
 
     # Monthly average spend - calculating and making data lists for the bar chart:
@@ -403,8 +434,14 @@ def new_goal(request):
 def goal_index(request):
     goals = Goal.objects.filter(user=request.user)
 
+    # Calculate goal progress to date: 
+    goal_total = goals.values('amount_saved', 'goal_amount')
+    goal_amount_list = [float(item['goal_amount']) for item in goal_total]
+    goal_progress_list = [float(item['amount_saved']) for item in goal_total]
+    goal_progress_calculation = [(i / j)*100 for i, j in zip(goal_progress_list, goal_amount_list)]
+
     return render(request, 'goals/index.html', {
-        'goals': goals,
+        'goals': zip(goals, goal_progress_calculation),
     })
 
 
@@ -417,12 +454,3 @@ class GoalUpdate(LoginRequiredMixin, UpdateView):
 class GoalDelete(LoginRequiredMixin, DeleteView):
     model = Goal
     success_url = '/goals/'
-
-    #     # Calculating current month's expenses by category and converting necessary data out of that calculation into lists to use for pie chart:
-    # current_expenses = expenses.annotate(month=TruncMonth('expense_date'), category_name=F('category__name')).values('month', 'category_name').annotate(current_expenses=Sum('expense_amount')).filter(expense_date__gte=first_day, expense_date__lte=last_day)
-    # category_names = [item['category_name'] for item in current_expenses]
-    # totals = [float(item['current_expenses']) for item in current_expenses]
-    # # Creating the total expenses by category per current month pie chart:
-    # x = totals
-    # y = category_names
-    # chart_pie_current_expenses = get_pie_current_expenses(x, y)
