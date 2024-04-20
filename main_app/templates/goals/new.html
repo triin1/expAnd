@@ -4,7 +4,7 @@
 
     <h1>Add a goal</h1>
     
-    <form action="{% url 'add_goal' %}" method="post">
+    <form action="{% url 'new_goal' %}" method="post">
         {% csrf_token %}
         {{ goal_form.as_p }}
         <input type="submit" value="Add goal" class="btn btn-dark">

@@ -68,7 +68,7 @@ class IncomeForm(ModelForm):
 class GoalForm(ModelForm):
     class Meta:
         model = Goal
-        fields = ['goal_amount', 'goal_date', 'description', 'amount_saved']
+        fields = ['name', 'goal_amount', 'goal_date', 'description', 'amount_saved']
 
     # Function for implementing the calendar widget on form:
     def __init__(self, *args, **kwargs):

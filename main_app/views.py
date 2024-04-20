@@ -15,6 +15,11 @@ from .utils import get_plot_comparison, get_bar_total, get_pie_current_expenses,
 
 
 # All general and authentication related views:
+def about(request):
+    return render(request, 'about.html')
+
+
+@login_required
 def home(request):
     # Querying all necessary data for the page:
     expenses = Expense.objects.filter(user=request.user)
@@ -54,7 +59,7 @@ def home(request):
     chart_bar_home_month = get_bar_homemonth(x1, y1, x2, y2, x3, y3)
 
     # Calculating total expenses, budget and income for the current year: 
-    # today = datetime.now()
+    today = datetime.now()
     this_year_expenses = expenses.filter(expense_date__year=today.year).aggregate(current_year=Sum('expense_amount'))
     total_this_year_expenses = float(this_year_expenses['current_year'])
     this_year_budget = budget.filter(budget_date__year=today.year).aggregate(current_year=Sum('budget_amount'))
@@ -378,24 +383,20 @@ class IncomeDelete(LoginRequiredMixin, DeleteView):
 
 
 # All goals related views:
-# Page to add a form for new goals to:
 @login_required
 def new_goal(request):
-    goal_form = GoalForm()
+    if request.method == 'POST':
+        goal_form = GoalForm(request.POST)
+        if goal_form.is_valid():
+            new_goal = goal_form.save(commit=False)
+            new_goal.user = request.user
+            new_goal.save()
+            return redirect('goal_index')
+    else:
+        goal_form = GoalForm()
     return render(request, 'goals/new.html', {
         'goal_form': goal_form
     })
-
-
-# New goal form (added to the new_goal page):
-@login_required
-def add_goal(request):
-    goal_form = GoalForm(request.POST)
-    if goal_form.is_valid():
-        new_goal = goal_form.save(commit=False)
-        new_goal.user = request.user
-        new_goal.save()
-    return redirect('goal_index')
 
 
 @login_required
@@ -409,10 +410,19 @@ def goal_index(request):
 
 class GoalUpdate(LoginRequiredMixin, UpdateView):
     model = Goal
-    fields = ['goal_amount', 'goal_date', 'description', 'amount_saved']
+    fields = ['name', 'goal_amount', 'goal_date', 'description', 'amount_saved']
     success_url = '/goals/'
 
 
 class GoalDelete(LoginRequiredMixin, DeleteView):
     model = Goal
     success_url = '/goals/'
+
+    #     # Calculating current month's expenses by category and converting necessary data out of that calculation into lists to use for pie chart:
+    # current_expenses = expenses.annotate(month=TruncMonth('expense_date'), category_name=F('category__name')).values('month', 'category_name').annotate(current_expenses=Sum('expense_amount')).filter(expense_date__gte=first_day, expense_date__lte=last_day)
+    # category_names = [item['category_name'] for item in current_expenses]
+    # totals = [float(item['current_expenses']) for item in current_expenses]
+    # # Creating the total expenses by category per current month pie chart:
+    # x = totals
+    # y = category_names
+    # chart_pie_current_expenses = get_pie_current_expenses(x, y)
