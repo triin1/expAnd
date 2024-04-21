@@ -1,9 +1,29 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 
-<h1>Welcome to Exp&</h1>
+<h1>Welcome!</h1>
 
-    <p>Content coming soon</p>
+<div class="about-container">
+    <div class="card home-style" style="width: 25rem;">
+        <div class="card-body">
+            <h5 class="card-title">Exp& is here to help you:</h5>
+            <ul class="card-text">
+                    <li>Track your expenses</li>
+                    <li>Create monthly budgets</li>
+                    <li>Monitor your income</li>
+                    <li>Analyse your spending in relation to your income and budgets</li>
+                    <li>Set and track saving goals</li>
+            </ul>
+            <a href="{% url 'login' %}" class="card-link btn btn-dark">Log in</a>
+            <a href="{% url 'signup' %}" class="card-link btn btn-dark">Sign up</a>
+        </div>
+    </div>
+
+    <div class="card" style="width: 30rem;">
+        <img src="{% static 'sample.jpeg' %}" class="card-img-top" alt="Screeshot with three financial graphs">
+    </div>
+</div>
 
 {% endblock %}

@@ -4,6 +4,19 @@
 
 <h1>Welcome, {{ user }}</h1>
 
+<div class="card home-style" style="width: 31.5rem;">
+    <div class="card-body">
+        <h5 class="card-title">Exp& is here to help you:</h5>
+        <ul class="card-text">
+            <li>Track your expenses</li>
+            <li>Create monthly budgets</li>
+            <li>Monitor your income</li>
+            <li>Analyse your spending in relation to your income and budgets</li>
+            <li>Set and track saving goals</li>
+        </ul>
+    </div>
+</div>
+
 <div class="home-charts-container">
     {% if chart_bar_home_month %}
         <img class="home-charts" src="data:image/png;base64, {{ chart_bar_home_month|safe }}">
@@ -13,6 +26,5 @@
         <img class="home-charts" src="data:image/png;base64, {{ chart_bar_home_year|safe }}">
     {% endif %}
 </div>
-
 
 {% endblock %}

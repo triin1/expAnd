@@ -2,7 +2,9 @@
 /* #F0FF42
 #82CD47
 #54B435
-#379237 */
+#379237 
+#fffd8d
+*/
 
 /* General page styles */
 * {
@@ -17,7 +19,8 @@ body {
     padding: 4vmin;
     box-sizing: border-box;
     margin: 0;
-    background-color: #fffd8d;
+    background-image: url("/static/background.jpg");
+    background-size: cover;
 }
 
 /* General main section related styles */
@@ -40,20 +43,37 @@ p {
   }
 
 /* Home page */
-.home-charts-container {
-    width: 100%;
-    max-width: 600px;
-    height: 400px;
-    margin: auto;
+.home-charts {
+    margin: 0 0.5rem;
 }
 
-@media (max-width: 400px) {
-    .home-charts-container {
-        height: 200px;
+@media (max-width: 550px) {
+    .home-charts {
+        width: 200px;
     }
 }
 
-.home-charts {
-    height: 100%;
-    width: 100%
+.home-style {
+    margin: 2rem 0.5rem 1rem 0.5rem;
+    font-family: "Rubik", sans-serif
+}
+
+/* About page */
+.about-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.home-style > div > a {
+    margin: 0 1rem;
+}
+
+/* Expense summary page */
+@media (max-width: 550px) {
+    .summary-charts {
+        width: 200px;
+    }
+    .summary-charts-daily {
+        width: 400px;
+    }
 }

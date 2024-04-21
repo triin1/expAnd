@@ -3,23 +3,23 @@
 {% block content %}
 
     {% if chart_bar_total_expenses %}
-        <img src="data:image/png;base64, {{ chart_bar_total_expenses|safe }}">
+        <img class="summary-charts" src="data:image/png;base64, {{ chart_bar_total_expenses|safe }}">
     {% endif %}
     
     {% if chart_pie_current_expenses %}
-        <img src="data:image/png;base64, {{ chart_pie_current_expenses|safe }}">
+        <img class="summary-charts" src="data:image/png;base64, {{ chart_pie_current_expenses|safe }}">
     {% endif %}
 
     {% if chart_plot_comparison %}
-        <img src="data:image/png;base64, {{ chart_plot_comparison|safe }}">
+        <img class="summary-charts" src="data:image/png;base64, {{ chart_plot_comparison|safe }}">
     {% endif %} 
 
     {% if chart_bar_average_expenses %}
-        <img src="data:image/png;base64, {{ chart_bar_average_expenses|safe }}">
+        <img class="summary-charts" src="data:image/png;base64, {{ chart_bar_average_expenses|safe }}">
     {% endif %} 
 
     {% if chart_daily %}
-        <img src="data:image/png;base64, {{ chart_daily|safe }}">
+        <img class="summary-charts-daily" src="data:image/png;base64, {{ chart_daily|safe }}">
     {% endif %}
 
     <h1>Monthly expense summary 
