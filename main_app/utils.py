@@ -108,7 +108,7 @@ def get_pie_current_expenses(x,y):
     plt.switch_backend('AGG')
     plt.figure(figsize=(5,3))
     plt.title('Current month spend by category')
-    plt.pie(x, labels=y, textprops={'fontsize': 7}, colors=['#F0FF42', '#82CD47', '#54B435', '#379237', '#ffdfba', '#ffb3ba', '#bae1ff'], autopct="%.0f%%", pctdistance=0.8)
+    plt.pie(x, labels=y, textprops={'fontsize': 7}, colors=['#F0FF42', '#82CD47', '#54B435', '#379237','#FFF0CB',  '#b1d5e3', '#e8d062'], autopct="%.0f%%", pctdistance=0.8)
     plt.tight_layout()
     graph = get_graph()
     return graph

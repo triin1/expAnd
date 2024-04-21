@@ -30,11 +30,21 @@ def home(request):
     # Calculating total expenses, budget and income for the current month: 
     today = datetime.now()
     this_month_expenses = expenses.filter(expense_date__month=today.month).aggregate(current_month=Sum('expense_amount'))
-    total_this_month_expenses = float(this_month_expenses['current_month'])
     this_month_budget = budget.filter(budget_date__month=today.month).aggregate(current_month=Sum('budget_amount'))
-    total_this_month_budget = float(this_month_budget['current_month'])
     this_month_income = income.filter(income_date__month=today.month).aggregate(current_month=Sum('income_amount'))
-    total_this_month_income = float(this_month_income['current_month'])
+    # Include a conditinal that the sums cannot be None, otherwise the float() function gives a TypeError:
+    if this_month_expenses['current_month'] is not None:
+        total_this_month_expenses = float(this_month_expenses['current_month'])
+    else:
+        total_this_month_expenses = 0
+    if this_month_budget['current_month'] is not None:
+        total_this_month_budget = float(this_month_budget['current_month'])
+    else:
+        total_this_month_budget = 0
+    if this_month_income['current_month'] is not None:
+        total_this_month_income = float(this_month_income['current_month'])
+    else:
+        total_this_month_income = 0
     # Creating the total expenses, budget and income per current month bar chart:
     x1 = "Expenses"
     y1 = total_this_month_expenses
@@ -47,11 +57,21 @@ def home(request):
     # Calculating total expenses, budget and income for the current year: 
     today = datetime.now()
     this_year_expenses = expenses.filter(expense_date__year=today.year).aggregate(current_year=Sum('expense_amount'))
-    total_this_year_expenses = float(this_year_expenses['current_year'])
     this_year_budget = budget.filter(budget_date__year=today.year).aggregate(current_year=Sum('budget_amount'))
-    total_this_year_budget = float(this_year_budget['current_year'])
     this_year_income = income.filter(income_date__year=today.year).aggregate(current_year=Sum('income_amount'))
-    total_this_year_income = float(this_year_income['current_year'])
+    # Include a conditinal that the sums cannot be None, otherwise the float() function gives a TypeError:
+    if this_year_expenses['current_year'] is not None:
+        total_this_year_expenses = float(this_year_expenses['current_year'])
+    else:
+        total_this_year_expenses = 0
+    if this_year_budget['current_year'] is not None:
+        total_this_year_budget = float(this_year_budget['current_year'])
+    else:
+        total_this_year_budget = 0
+    if this_year_income['current_year'] is not None:
+        total_this_year_income = float(this_year_income['current_year'])
+    else:
+        total_this_year_income = 0
     # Creating the total expenses, budget and income per current month bar chart:
     x1 = "Expenses"
     y1 = total_this_year_expenses
@@ -220,32 +240,42 @@ def summary_index(request):
     # Merge all dictionaries. N.B. it does not include full list of all values, it is compiled to get the full range of dates/months only 
     merged_dictionary = {**month_budget_dictionary, **month_income_dictionary, **month_expense_dictionary}
     # Based on the merged dictionaries, define the earliest and latest months that have any entries in any of the three datasets:
-    start_month = min(merged_dictionary.keys())
-    end_month = max(merged_dictionary.keys())
+    # If statement is necessary because if no data, it gives an error when trying to load the page
+    if merged_dictionary:
+        start_month = min(merged_dictionary.keys())
+        end_month = max(merged_dictionary.keys())
     # Create a range based on the earliest and latest months that have data:
-    month_range = [start_month + relativedelta(months=x) for x in range((end_month.year - start_month.year) * 12 + end_month.month - start_month.month + 1)]
+        month_range = [start_month + relativedelta(months=x) for x in range((end_month.year - start_month.year) * 12 + end_month.month - start_month.month + 1)]
     # Fill in any data gaps in all three datasets by inserting zero values for the months that don't have any data: 
-    for month in month_range:
-        if month not in month_budget_dictionary:
-            month_budget_dictionary[month] = 0
-        if month not in month_income_dictionary:
-            month_income_dictionary[month] = 0
-        if month not in month_expense_dictionary:
-            month_expense_dictionary[month] = 0
+        for month in month_range:
+            if month not in month_budget_dictionary:
+                month_budget_dictionary[month] = 0
+            if month not in month_income_dictionary:
+                month_income_dictionary[month] = 0
+            if month not in month_expense_dictionary:
+                month_expense_dictionary[month] = 0
     # Sort all three datasets based on dates/months:
-    sorted_month_expenses = {key: month_expense_dictionary[key] for key in sorted(month_expense_dictionary)}
-    sorted_month_income = {key: month_income_dictionary[key] for key in sorted(month_income_dictionary)}
-    sorted_month_budget = {key: month_budget_dictionary[key] for key in sorted(month_budget_dictionary)}
+        sorted_month_expenses = {key: month_expense_dictionary[key] for key in sorted(month_expense_dictionary)}
+        print(sorted_month_expenses)
+        sorted_month_income = {key: month_income_dictionary[key] for key in sorted(month_income_dictionary)}
+        sorted_month_budget = {key: month_budget_dictionary[key] for key in sorted(month_budget_dictionary)}
     # Break the dictionaries into lists that can be charted. N.B keys maintain the original dictionary order when put into a list; however, the values don't, so different methods have to be used for the keys and values when preparing lists. Turn months into strings for chart presentation:
-    sorted_expenses_months_only = list(sorted_month_expenses.keys())
-    months_chart_expenses = [date.strftime('%b-%y') for date in sorted_expenses_months_only]
-    sorted_income_months_only = list(sorted_month_income.keys())
-    months_chart_income = [date.strftime('%b-%y') for date in sorted_income_months_only]
-    sorted_budget_months_only = list(sorted_month_budget.keys())
-    months_chart_budget = [date.strftime('%b-%y') for date in sorted_budget_months_only]
-    monthly_expenses_chart = [month_expense_dictionary[key] for key in sorted_expenses_months_only]
-    monthly_income_chart = [month_income_dictionary[key] for key in sorted_income_months_only]
-    monthly_budget_chart = [month_budget_dictionary[key] for key in sorted_budget_months_only]
+        sorted_expenses_months_only = list(sorted_month_expenses.keys())
+        months_chart_expenses = [date.strftime('%b-%y') for date in sorted_expenses_months_only]
+        sorted_income_months_only = list(sorted_month_income.keys())
+        months_chart_income = [date.strftime('%b-%y') for date in sorted_income_months_only]
+        sorted_budget_months_only = list(sorted_month_budget.keys())
+        months_chart_budget = [date.strftime('%b-%y') for date in sorted_budget_months_only]
+        monthly_expenses_chart = [month_expense_dictionary[key] for key in sorted_expenses_months_only]
+        monthly_income_chart = [month_income_dictionary[key] for key in sorted_income_months_only]
+        monthly_budget_chart = [month_budget_dictionary[key] for key in sorted_budget_months_only]
+    else:
+        months_chart_expenses = datetime.now().strftime('%b-%y')
+        months_chart_income = datetime.now().strftime('%b-%y')
+        months_chart_budget = datetime.now().strftime('%b-%y')
+        monthly_expenses_chart = 0
+        monthly_income_chart = 0
+        monthly_budget_chart = 0
     # Create the line chart for total expenses versus income and budget per month:
     x1 = months_chart_expenses
     x2 = months_chart_income
@@ -272,8 +302,14 @@ def summary_index(request):
     daily_total = [float(item['daily_totals']) for item in daily_totals]
     daily_total_dictionary = {dates[i]: daily_total[i] for i in range(len(dates))}
     # Enter missing dates to the dataset with zero values:
-    start_date = min(daily_total_dictionary.keys())
-    end_date = max(daily_total_dictionary.keys())
+    if daily_total_dictionary:
+        start_date = min(daily_total_dictionary.keys())
+    else:
+        start_date = datetime.now()
+    if daily_total_dictionary:
+        end_date = max(daily_total_dictionary.keys())
+    else:
+        end_date = datetime.now()
     date_range = [start_date + timedelta(days=x) for x in range((end_date - start_date).days)]
     date_range.append(end_date)
     for date in date_range:

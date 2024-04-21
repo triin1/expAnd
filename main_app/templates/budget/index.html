@@ -8,11 +8,14 @@
         <div class="row">
 
             <div class="col-6">
-                <h4>Current month budget summary (in 
-                    {% for c in currency %}
-                        {{ c }} )
-                </h4>
+                <h4>Current month budget summary 
+                    {% if currency %}
+                        (in
+                    {% endif %} 
+                        {% for c in currency %}
+                            {{ c }} )
                     {% endfor %}
+                </h4>
                 <table class="table">
                     <thead class="table-dark">
                         <tr>

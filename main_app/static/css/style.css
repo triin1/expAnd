@@ -44,7 +44,7 @@ p {
     width: 100%;
     max-width: 600px;
     height: 400px;
-    margin: auto
+    margin: auto;
 }
 
 @media (max-width: 400px) {
