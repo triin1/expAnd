@@ -22,7 +22,11 @@
         <img src="data:image/png;base64, {{ chart_daily|safe }}">
     {% endif %}
 
-    <h1>Monthly expense summary</h1>
+    <h1>Monthly expense summary (in 
+        {% for c in currency %}
+            {{ c }} )
+        {% endfor %}
+    </h1>
 
     <table class="table table-hover">
         <thead class="table-dark">
@@ -37,7 +41,7 @@
             <tr>
                 <td>{{ expense.month|date:"F Y" }}</td>
                 <td>{{ expense.category_name }}</td>
-                <td>{{ expense.total_expenses }}</td>
+                <td>{{ expense.total_expenses|floatformat:2 }}</td>
             </tr>
             {% endfor %}
         </tbody>

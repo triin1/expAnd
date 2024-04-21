@@ -21,7 +21,6 @@ urlpatterns = [
     # all paths related to expenses:
     path('expenses/new', views.expenses_new, name="expense_new"),
     path('expenses/detail/', views.expenses_detail, name="expense_detail"),
-    path('expenses/add/', views.add_expense, name='add_expense'),
     path('expenses/<int:pk>/update/', views.ExpenseUpdate.as_view(), name='update_expense'),
     path('expenses/<int:pk>/delete/', views.ExpenseDelete.as_view(), name='delete_expense'),
     path('expenses/summary/', views.summary_index, name='summary_index'),
@@ -34,7 +33,6 @@ urlpatterns = [
 
     # all paths related to income:
     path('income/new/', views.new_income, name="new_income"),
-    path('income/add/', views.add_income, name="add_income"),
     path('income/', views.income_index, name="income_index"),
     path('income/<int:pk>/update/', views.IncomeUpdate.as_view(), name='update_income'),
     path('income/<int:pk>/delete/', views.IncomeDelete.as_view(), name='delete_income'),

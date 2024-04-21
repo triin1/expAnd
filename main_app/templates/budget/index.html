@@ -8,8 +8,11 @@
         <div class="row">
 
             <div class="col-6">
-                <h4>Current month budget summary</h4>
-
+                <h4>Current month budget summary (in 
+                    {% for c in currency %}
+                        {{ c }} )
+                </h4>
+                    {% endfor %}
                 <table class="table">
                     <thead class="table-dark">
                         <tr>
@@ -24,9 +27,9 @@
                     {% for sorted_budget_categories_only, sorted_budget_values_only, sorted_expenses_values_only, current_delta in current_data %}
                         <tr>
                             <td>{{ sorted_budget_categories_only }}</td>
-                            <td>{{ sorted_budget_values_only }}</td>
-                            <td>{{ sorted_expenses_values_only }}</td>
-                            <td>{{ current_delta }}</td>
+                            <td>{{ sorted_budget_values_only|floatformat:2 }}</td>
+                            <td>{{ sorted_expenses_values_only|floatformat:2 }}</td>
+                            <td>{{ current_delta|floatformat:2 }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

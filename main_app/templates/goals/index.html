@@ -11,7 +11,7 @@
             <p class="card-text">{{ goal.description }}</p>
             <p>Goal amount: {{ goal.goal_amount }}</p>
             <p>Amount saved: {{ goal.amount_saved }}</p>
-            <p>Goal progress: {{ to_go }}%</p>
+            <p>Goal progress: {{ to_go|floatformat:1 }}%</p>
             <a href="{% url 'update_goal' goal.id %}" class="card-link">Update goal</a>
             <a href="{% url 'delete_goal' goal.id %}" class="card-link">Delete goal</a>
         </div>

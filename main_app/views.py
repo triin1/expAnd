@@ -138,22 +138,19 @@ class SubcategoryDelete(LoginRequiredMixin, DeleteView):
 
 # All expenses related views:
 @login_required
-# Page to add a form for new expense to:
 def expenses_new(request):
-    expense_form = ExpenseForm(user=request.user)
+    if request.method == 'POST':
+        expense_form = ExpenseForm(request.user, request.POST)
+        if expense_form.is_valid():
+            new_expense = expense_form.save(commit=False)
+            new_expense.user = request.user
+            new_expense.save()
+        return redirect('expense_detail')
+    else:
+        expense_form = ExpenseForm(user=request.user)
     return render(request, 'expenses/new.html', {
         'expense_form': expense_form
     })
-
-
-@login_required
-def add_expense(request):
-    expense_form = ExpenseForm(request.user, request.POST)
-    if expense_form.is_valid():
-        new_expense = expense_form.save(commit=False)
-        new_expense.user = request.user
-        new_expense.save()
-    return redirect('expense_detail')
 
 
 @login_required
@@ -277,7 +274,6 @@ def summary_index(request):
     # Enter missing dates to the dataset with zero values:
     start_date = min(daily_total_dictionary.keys())
     end_date = max(daily_total_dictionary.keys())
-    print(end_date)
     date_range = [start_date + timedelta(days=x) for x in range((end_date - start_date).days)]
     date_range.append(end_date)
     for date in date_range:
@@ -294,6 +290,11 @@ def summary_index(request):
     # Calculating total expenses by category and by month and order the expenses by month with most recent at the top (diaplayed as a table on the page):
     total_expenses = expenses.annotate(month=TruncMonth('expense_date'), category_name=F('category__name')).order_by('-month').values('month', 'category_name').annotate(total_expenses=Sum('expense_amount'))
 
+    # Extract list of currencies the user has used to record their expenses
+    currencies_queryset = expenses.values('expense_amount_currency')
+    currencies = [item['expense_amount_currency'] for item in currencies_queryset]
+    currency = set(currencies)
+
     return render(request, 'expenses/summary.html', {
         'expenses': expenses,
         'total_expenses': total_expenses,
@@ -302,6 +303,7 @@ def summary_index(request):
         'chart_plot_comparison': chart_plot_comparison,
         'chart_bar_average_expenses': chart_bar_average_expenses,
         'chart_daily': chart_daily, 
+        'currency': currency
     })
 
 
@@ -321,6 +323,11 @@ def budget_index(request):
     budget = Budget.objects.filter(user=request.user)
     budget_form = BudgetForm(user=request.user)
     expenses = Expense.objects.filter(user=request.user)
+
+    # Extract list of currencies the user has used to record their expenses
+    currencies_queryset = expenses.values('expense_amount_currency')
+    currencies = [item['expense_amount_currency'] for item in currencies_queryset]
+    currency = set(currencies)
 
     # Defining the first day and the last day of the current month:
     first_day = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -363,7 +370,8 @@ def budget_index(request):
     return render(request, 'budget/index.html', {
         'budget_form': budget_form,
         'budget': budget,
-        'current_data': zip(sorted_budget_categories_only, sorted_budget_values_only, sorted_expenses_values_only, current_delta)
+        'current_data': zip(sorted_budget_categories_only, sorted_budget_values_only, sorted_expenses_values_only, current_delta),
+        'currency': currency
     })
 
 
@@ -379,24 +387,20 @@ class BudgetDelete(LoginRequiredMixin, DeleteView):
 
 
 # All income related views:
-# Page to add a form for new income to:
 @login_required
 def new_income(request):
-    income_form = IncomeForm()
+    if request.method == 'POST':
+        income_form = IncomeForm(request.POST)
+        if income_form.is_valid():
+            new_income_amount = income_form.save(commit=False)
+            new_income_amount.user = request.user
+            new_income_amount.save()
+        return redirect('income_index')
+    else:
+        income_form = IncomeForm()
     return render(request, 'income/new.html', {
         'income_form': income_form
     })
-
-
-# New income form (added to the new_income page):
-@login_required
-def add_income(request):
-    income_form = IncomeForm(request.POST)
-    if income_form.is_valid():
-        new_income_amount = income_form.save(commit=False)
-        new_income_amount.user = request.user
-        new_income_amount.save()
-    return redirect('income_index')
 
 
 @login_required
@@ -428,7 +432,7 @@ def new_goal(request):
             new_goal = goal_form.save(commit=False)
             new_goal.user = request.user
             new_goal.save()
-            return redirect('goal_index')
+        return redirect('goal_index')
     else:
         goal_form = GoalForm()
     return render(request, 'goals/new.html', {

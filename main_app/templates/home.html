@@ -4,12 +4,15 @@
 
 <h1>Welcome, {{ user }}</h1>
 
+<div class="home-charts-container">
     {% if chart_bar_home_month %}
-        <img src="data:image/png;base64, {{ chart_bar_home_month|safe }}">
+        <img class="home-charts" src="data:image/png;base64, {{ chart_bar_home_month|safe }}">
     {% endif %}
-
+    
     {% if chart_bar_home_year %}
-        <img src="data:image/png;base64, {{ chart_bar_home_year|safe }}">
+        <img class="home-charts" src="data:image/png;base64, {{ chart_bar_home_year|safe }}">
     {% endif %}
+</div>
+
 
 {% endblock %}
