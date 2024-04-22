@@ -10,9 +10,9 @@
                 <tr>
                     <th scope="col">Category</th>
                     <th scope="col">Subcategory</th>
-                    <th scope="col">Expense date</th>
-                    <th scope="col">Expense amount</th>
-                    <th scope="col">Description</th>
+                    <th scope="col" class="alignment">Expense date</th>
+                    <th scope="col" class="alignment">Expense amount</th>
+                    <th scope="col" class="alignment-center">Description</th>
                     <th scope="col"></th>
                     <th scope="col"></th>
                 </tr>
@@ -22,11 +22,11 @@
                     <tr>
                         <td>{{ expense.category.name }}</td>    
                         <td>{{ expense.subcategory.name }}</td>    
-                        <td>{{ expense.expense_date }}</td>    
-                        <td>{{ expense.expense_amount }}</td>    
-                        <td>{{ expense.description }}</td>    
-                        <td><a href="{% url 'update_expense' expense.id %}">Edit</a></td>    
-                        <td><a href="{% url 'delete_expense' expense.id %}">Delete</a></td>    
+                        <td class="alignment">{{ expense.expense_date }}</td>    
+                        <td class="alignment">{{ expense.expense_amount }}</td>    
+                        <td class="alignment-center">{{ expense.description }}</td>    
+                        <td class="alignment-center"><a href="{% url 'update_expense' expense.id %}">Edit</a></td>    
+                        <td class="alignment-center"><a href="{% url 'delete_expense' expense.id %}">Delete</a></td>    
                     </tr>
                 {% endfor %}
             </tbody>

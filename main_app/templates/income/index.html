@@ -9,8 +9,8 @@
             <thead class="table-dark">
                 <tr>
                     <th scope="col">Date</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Description</th>
+                    <th scope="col" class="alignment">Amount</th>
+                    <th scope="col" class="alignment">Description</th>
                     <th scope="col"></th>
                     <th scope="col"></th>
                 </tr>
@@ -19,10 +19,10 @@
                 {% for i in income %}
                     <tr>  
                         <td>{{ i.income_date }}</td>    
-                        <td>{{ i.income_amount }}</td>    
-                        <td>{{ i.description }}</td>    
-                        <td><a href="{% url 'update_income' i.id %}">Update</a></td>    
-                        <td><a href="{% url 'delete_income' i.id %}">Delete</a></td>    
+                        <td class="alignment">{{ i.income_amount }}</td>    
+                        <td class="alignment">{{ i.description }}</td>    
+                        <td class="alignment-center"><a href="{% url 'update_income' i.id %}">Update</a></td>    
+                        <td class="alignment-center"><a href="{% url 'delete_income' i.id %}">Delete</a></td>    
                     </tr>
                 {% endfor %}
             </tbody>

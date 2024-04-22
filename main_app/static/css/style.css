@@ -103,6 +103,15 @@ p {
     flex-direction: row;
 }
 
+/* Footer */
 .footer-font {
     font-size: 12px;
+}
+
+.alignment {
+    text-align: right;
+}
+
+.alignment-center {
+    text-align: center;
 }
