@@ -18,18 +18,23 @@ class SubcategoryForm(ModelForm):
         model = Subcategory
         fields = ['category', 'name']
 
+        widgets = {
+            'category': forms.Select(attrs={'class': 'form-select'}),
+            'name': forms.TextInput(attrs={'class': 'form-control'})
+        }
+
     # Function for making category selection user specific:
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['category'].queryset = Category.objects.filter(user=user)
 
 
-# Form for formatting date display on form:
+# Form for formatting date display on form. Do not flip the year-month-day display around, it will break the date showing up in the edit function:
 class DateInput(forms.DateInput):
     input_type = 'date'
 
     def __init__(self, **kwargs):
-        kwargs['format'] = '%d-%m-%Y'
+        kwargs['format'] = '%Y-%m-%d'
         super().__init__(**kwargs)
 
 
@@ -57,6 +62,10 @@ class BudgetForm(ModelForm):
         model = Budget
         fields = ['category', 'budget_date', 'budget_amount']
 
+        widgets = {
+            'category': forms.Select(attrs={'class': 'form-select'}),
+        }
+
     # Function for making category selections user specific and implementing the calendar widget on form:
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -69,6 +78,10 @@ class IncomeForm(ModelForm):
         model = Income
         fields = ['income_date', 'income_amount', 'description']
 
+        widgets = {
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
     # Function for implementing the calendar widget on form:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -79,6 +92,11 @@ class GoalForm(ModelForm):
     class Meta:
         model = Goal
         fields = ['name', 'goal_amount', 'goal_date', 'description', 'amount_saved']
+
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'style': 'height: 80px;'}),
+        }
 
     # Function for implementing the calendar widget on form:
     def __init__(self, *args, **kwargs):

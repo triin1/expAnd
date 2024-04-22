@@ -2,21 +2,25 @@
 
 {% block content %}
 
-{% for goal, to_go in goals %}
-
-    <div class="card" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">{{ goal.name }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Target date: {{ goal.goal_date }}</h6>
-            <p class="card-text">{{ goal.description }}</p>
-            <p>Goal amount: {{ goal.goal_amount }}</p>
-            <p>Amount saved: {{ goal.amount_saved }}</p>
-            <p>Goal progress: {{ to_go|floatformat:1 }}%</p>
-            <a href="{% url 'update_goal' goal.id %}" class="card-link">Update goal</a>
-            <a href="{% url 'delete_goal' goal.id %}" class="card-link">Delete goal</a>
-        </div>
+<div class="container">
+    <div class="row">
+        {% for goal, to_go in goals %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ goal.name }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Target date: {{ goal.goal_date }}</h6>
+                        <p class="card-text">{{ goal.description }}</p>
+                        <p>Goal amount: {{ goal.goal_amount }}</p>
+                        <p>Amount saved: {{ goal.amount_saved }}</p>
+                        <p>Goal progress: {{ to_go|floatformat:1 }}%</p>
+                        <a href="{% url 'update_goal' goal.id %}" class="card-link">Update goal</a>
+                        <a href="{% url 'delete_goal' goal.id %}" class="card-link">Delete goal</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}  
     </div>
-
-{% endfor %}
+</div>
 
 {% endblock %}

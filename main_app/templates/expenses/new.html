@@ -4,13 +4,13 @@
 
     <h1>Add expense</h1>
     
-    <div class="col-4 expense-form-style">
+    <div class="col-lg-4 content-formatting">
         <form method="post">
             {% csrf_token %}
             {{ expense_form.as_p }}
             <input type="submit" value="Add expense" class="btn btn-dark">
         </form>
     </div>
-    <div class="col-8"></div>
+    <div class="col-lg-8"></div>
 
 {% endblock %}

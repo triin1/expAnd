@@ -27,6 +27,7 @@ def home(request):
     budget = Budget.objects.filter(user=request.user)
     income = Income.objects.filter(user=request.user)
 
+
     # Calculating total expenses, budget and income for the current month: 
     today = datetime.now()
     this_month_expenses = expenses.filter(expense_date__month=today.month).aggregate(current_month=Sum('expense_amount'))
@@ -136,7 +137,7 @@ def category_index(request):
 
 class CategoryUpdate(LoginRequiredMixin, UpdateView):
     model = Category
-    fields = ['name']
+    form_class = CategoryForm
     success_url = '/categories/'
 
 
@@ -147,8 +148,13 @@ class CategoryDelete(LoginRequiredMixin, DeleteView):
 
 class SubcategoryUpdate(LoginRequiredMixin, UpdateView):
     model = Subcategory
-    fields = ['category', 'name']
+    form_class = SubcategoryForm
     success_url = '/categories/'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
 
 class SubcategoryDelete(LoginRequiredMixin, DeleteView):
@@ -261,7 +267,6 @@ def summary_index(request):
                 month_expense_dictionary[month] = 0
     # Sort all three datasets based on dates/months:
         sorted_month_expenses = {key: month_expense_dictionary[key] for key in sorted(month_expense_dictionary)}
-        print(sorted_month_expenses)
         sorted_month_income = {key: month_income_dictionary[key] for key in sorted(month_income_dictionary)}
         sorted_month_budget = {key: month_budget_dictionary[key] for key in sorted(month_budget_dictionary)}
     # Break the dictionaries into lists that can be charted. N.B keys maintain the original dictionary order when put into a list; however, the values don't, so different methods have to be used for the keys and values when preparing lists. Turn months into strings for chart presentation:
@@ -366,8 +371,8 @@ def budget_index(request):
     expenses = Expense.objects.filter(user=request.user)
 
     # Extract list of currencies the user has used to record their expenses
-    currencies_queryset = expenses.values('expense_amount_currency')
-    currencies = [item['expense_amount_currency'] for item in currencies_queryset]
+    currencies_queryset = budget.values('budget_amount_currency')
+    currencies = [item['budget_amount_currency'] for item in currencies_queryset]
     currency = set(currencies)
 
     # Defining the first day and the last day of the current month:
@@ -418,9 +423,13 @@ def budget_index(request):
 
 class BudgetUpdate(LoginRequiredMixin, UpdateView):
     model = Budget
-    fields = ['category', 'budget_date', 'budget_amount']
+    form_class = BudgetForm
     success_url = '/budget/'
-
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
 class BudgetDelete(LoginRequiredMixin, DeleteView):
     model = Budget
@@ -455,7 +464,7 @@ def income_index(request):
 
 class IncomeUpdate(LoginRequiredMixin, UpdateView):
     model = Income
-    fields = ['income_date', 'income_amount', 'description']
+    form_class = IncomeForm
     success_url = '/income/'
 
 
@@ -498,7 +507,7 @@ def goal_index(request):
 
 class GoalUpdate(LoginRequiredMixin, UpdateView):
     model = Goal
-    fields = ['name', 'goal_amount', 'goal_date', 'description', 'amount_saved']
+    form_class = GoalForm
     success_url = '/goals/'
 
 

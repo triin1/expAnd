@@ -2,10 +2,16 @@
 
 {% block content %}
 
-    <form action="{% url 'update_category' category.id %}" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Update category" class="btn btn-dark">
-    </form>
+    <h1>Update category</h1>
+
+    <div class="col-lg-4 content-formatting">
+        <form action="{% url 'update_category' category.id %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Update category" class="btn btn-dark">
+        </form>
+    </div>
+
+    <div class="col-lg-8"></div>
 
 {% endblock %}

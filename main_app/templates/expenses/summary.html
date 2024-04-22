@@ -2,52 +2,59 @@
 
 {% block content %}
 
-    {% if chart_bar_total_expenses %}
-        <img class="summary-charts" src="data:image/png;base64, {{ chart_bar_total_expenses|safe }}">
-    {% endif %}
-    
-    {% if chart_pie_current_expenses %}
-        <img class="summary-charts" src="data:image/png;base64, {{ chart_pie_current_expenses|safe }}">
-    {% endif %}
+    <h1>Your expense summary</h1>
 
-    {% if chart_plot_comparison %}
-        <img class="summary-charts" src="data:image/png;base64, {{ chart_plot_comparison|safe }}">
-    {% endif %} 
+    <div class="content-formatting">
+        {% if chart_bar_total_expenses %}
+            <img class="summary-charts" src="data:image/png;base64, {{ chart_bar_total_expenses|safe }}">
+        {% endif %}
+        
+        {% if chart_pie_current_expenses %}
+            <img class="summary-charts" src="data:image/png;base64, {{ chart_pie_current_expenses|safe }}">
+        {% endif %}
 
-    {% if chart_bar_average_expenses %}
-        <img class="summary-charts" src="data:image/png;base64, {{ chart_bar_average_expenses|safe }}">
-    {% endif %} 
+        {% if chart_plot_comparison %}
+            <img class="summary-charts" src="data:image/png;base64, {{ chart_plot_comparison|safe }}">
+        {% endif %} 
 
-    {% if chart_daily %}
-        <img class="summary-charts-daily" src="data:image/png;base64, {{ chart_daily|safe }}">
-    {% endif %}
+        {% if chart_bar_average_expenses %}
+            <img class="summary-charts" src="data:image/png;base64, {{ chart_bar_average_expenses|safe }}">
+        {% endif %} 
 
-    <h1>Monthly expense summary 
+        {% if chart_daily %}
+            <img class="summary-charts-daily" src="data:image/png;base64, {{ chart_daily|safe }}">
+        {% endif %}
+    </div>
+
+    <h1 class="summary-table-title">Monthly expense summary 
         {% if currency %}
             (in
             {% for c in currency %}
-                {{ c }} )
+                {{ c }}
             {% endfor %}
+            )
         {% endif %}
     </h1>
 
-    <table class="table table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>Month</th>
-                <th>Category</th>
-                <th>Total expense</th>
-            </tr>
-        </thead>
-        <tbody> 
-            {% for expense in total_expenses %}  
-            <tr>
-                <td>{{ expense.month|date:"F Y" }}</td>
-                <td>{{ expense.category_name }}</td>
-                <td>{{ expense.total_expenses|floatformat:2 }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="content-formatting">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Month</th>
+                    <th>Category</th>
+                    <th>Total expense</th>
+                </tr>
+            </thead>
+            <tbody> 
+                {% for expense in total_expenses %}  
+                <tr>
+                    <td>{{ expense.month|date:"F Y" }}</td>
+                    <td>{{ expense.category_name }}</td>
+                    <td>{{ expense.total_expenses|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 {% endblock %}

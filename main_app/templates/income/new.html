@@ -3,11 +3,15 @@
 {% block content %}
 
     <h1>Add income</h1>
-    
-    <form action="{% url 'new_income' %}" method="post">
-        {% csrf_token %}
-        {{ income_form.as_p }}
-        <input type="submit" value="Add income" class="btn btn-dark">
-    </form>
+
+    <div class="col-lg-4 content-formatting">
+        <form action="{% url 'new_income' %}" method="post">
+            {% csrf_token %}
+            {{ income_form.as_p }}
+            <input type="submit" value="Add income" class="btn btn-dark">
+        </form>
+    </div>
+
+    <div class="col-lg-8"></div>
 
 {% endblock %}

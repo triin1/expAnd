@@ -65,7 +65,7 @@ def get_bar_average(x,y):
 
 def get_bar_daily(x1, y1):
     plt.switch_backend('AGG')
-    plt.figure(figsize=(10,3))
+    plt.figure(figsize=(10.1,3))
     plt.title('Daily spend')
     plt.bar(x1, y1, color='#03C03C')
     plt.xlabel('Day')

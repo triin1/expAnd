@@ -1,11 +1,3 @@
-/* colours: */
-/* #F0FF42
-#82CD47
-#54B435
-#379237 
-#fffd8d
-*/
-
 /* General page styles */
 * {
     font-family: "Rubik", sans-serif;
@@ -32,6 +24,10 @@ p {
     font-family: Helvetica, sans-serif;
 }
 
+.content-formatting {
+    margin: 2rem 0.5rem 1rem 0.5rem;
+}
+
 /* Nav bar related styles */
 .nav-color {
     background-color: #03C03C;
@@ -53,27 +49,21 @@ p {
     }
 }
 
-.home-style {
-    margin: 2rem 0.5rem 1rem 0.5rem;
-    font-family: "Rubik", sans-serif
-}
-
 /* About page */
 .about-container {
     display: flex;
     flex-direction: row;
 }
 
-.home-style > div > a {
+.content-formatting > div > a {
     margin: 0 1rem;
 }
 
-/* Add expense page */
-.expense-form-style {
-    margin: 2rem 0.5rem 1rem 0.5rem;
+/* Expense summary page */
+.summary-charts, .summary-charts-daily {
+    margin: 0.5rem 0.5rem 0.5rem 0;
 }
 
-/* Expense summary page */
 @media (max-width: 550px) {
     .summary-charts {
         width: 200px;
@@ -81,4 +71,38 @@ p {
     .summary-charts-daily {
         width: 400px;
     }
+}
+
+.summary-table-title {
+    margin: 3rem 0 0 0;
+}
+
+/* Manage categories page */
+.category-items, .subcategory-items {
+    display: flex;
+    align-items: center;
+}
+
+.category-items > span {
+    width: 232px;
+    display: inline-block
+}
+
+.category-items > a, .subcategory-items > a {
+    margin-left: 20px;
+}
+
+.subcategory-items > span {
+    width: 200px;
+    display: inline-block
+}
+
+/* Manage goals page */
+.goal-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.footer-font {
+    font-size: 12px;
 }

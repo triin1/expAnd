@@ -4,32 +4,34 @@
 
     <h1>List of all expenses</h1>
 
-    <table class="table table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th scope="col">Category</th>
-                <th scope="col">Subcategory</th>
-                <th scope="col">Expense date</th>
-                <th scope="col">Expense amount</th>
-                <th scope="col">Description</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for expense in expenses %}
+    <div class="content-formatting">
+        <table class="table table-hover">
+            <thead class="table-dark">
                 <tr>
-                    <td>{{ expense.category.name }}</td>    
-                    <td>{{ expense.subcategory.name }}</td>    
-                    <td>{{ expense.expense_date }}</td>    
-                    <td>{{ expense.expense_amount }}</td>    
-                    <td>{{ expense.description }}</td>    
-                    <td><a href="{% url 'update_expense' expense.id %}">Edit</a></td>    
-                    <td><a href="{% url 'delete_expense' expense.id %}">Delete</a></td>    
+                    <th scope="col">Category</th>
+                    <th scope="col">Subcategory</th>
+                    <th scope="col">Expense date</th>
+                    <th scope="col">Expense amount</th>
+                    <th scope="col">Description</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                    <tr>
+                        <td>{{ expense.category.name }}</td>    
+                        <td>{{ expense.subcategory.name }}</td>    
+                        <td>{{ expense.expense_date }}</td>    
+                        <td>{{ expense.expense_amount }}</td>    
+                        <td>{{ expense.description }}</td>    
+                        <td><a href="{% url 'update_expense' expense.id %}">Edit</a></td>    
+                        <td><a href="{% url 'delete_expense' expense.id %}">Delete</a></td>    
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 
 {% endblock %}
