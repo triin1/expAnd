@@ -2,10 +2,15 @@
 
 {% block content %}
 
-    <form action="{% url 'update_expense' expense.id %}" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Update expense" class="btn btn-dark">
-    </form>
+    <h1>Update expense entry</h1>
+
+    <div class="col-4 expense-form-style">
+        <form action="{% url 'update_expense' expense.id %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Update expense" class="btn btn-dark">
+        </form>
+    </div>
+    <div class="col-8"></div>
 
 {% endblock %}

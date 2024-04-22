@@ -68,6 +68,11 @@ p {
     margin: 0 1rem;
 }
 
+/* Add expense page */
+.expense-form-style {
+    margin: 2rem 0.5rem 1rem 0.5rem;
+}
+
 /* Expense summary page */
 @media (max-width: 550px) {
     .summary-charts {

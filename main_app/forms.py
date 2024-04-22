@@ -8,6 +8,10 @@ class CategoryForm(ModelForm):
         model = Category
         fields = ['name']
 
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'})
+        }
+
 
 class SubcategoryForm(ModelForm):
     class Meta:
@@ -33,6 +37,12 @@ class ExpenseForm(ModelForm):
     class Meta:
         model = Expense
         fields = ['category', 'subcategory', 'expense_date', 'expense_amount', 'description']
+
+        widgets = {
+            'category': forms.Select(attrs={'class': 'form-select'}),
+            'subcategory': forms.Select(attrs={'class': 'form-select'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'style': 'height: 80px;'}),
+        }
 
     # Function for making category and subcategory selections user specific and implementing the calendar widget on form:
     def __init__(self, user, *args, **kwargs):

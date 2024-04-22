@@ -183,8 +183,13 @@ def expenses_detail(request):
 
 class ExpenseUpdate(LoginRequiredMixin, UpdateView):
     model = Expense
-    fields = ['category', 'subcategory', 'expense_date', 'expense_amount', 'description']
+    form_class = ExpenseForm
     success_url = '/expenses/detail'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
 
 class ExpenseDelete(LoginRequiredMixin, DeleteView):
