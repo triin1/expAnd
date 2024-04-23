@@ -25,8 +25,8 @@
                         <td class="alignment">{{ expense.expense_date }}</td>    
                         <td class="alignment">{{ expense.expense_amount }}</td>    
                         <td class="alignment-center">{{ expense.description }}</td>    
-                        <td class="alignment-center"><a href="{% url 'update_expense' expense.id %}">Edit</a></td>    
-                        <td class="alignment-center"><a href="{% url 'delete_expense' expense.id %}">Delete</a></td>    
+                        <td class="alignment-center"><a href="{% url 'update_expense' expense.id %}" class="link-dark">Edit</a></td>    
+                        <td class="alignment-center"><a href="{% url 'delete_expense' expense.id %}" class="link-dark">Delete</a></td>    
                     </tr>
                 {% endfor %}
             </tbody>

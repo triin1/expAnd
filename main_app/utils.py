@@ -31,7 +31,7 @@ def get_plot_comparison(x1, y1, x2, y2, x3, y3):
     plt.title('Expenses versus income and budget by month')
     plt.plot(x1, y1, c='#F0FF42', label='Expenses')
     plt.plot(x2, y2, c='#82CD47', label='Income')
-    plt.plot(x3, y3, c='#54B435', label='Budget')
+    plt.plot(x3, y3, c='#b1d5e3', label='Budget')
     plt.ylabel('Amounts in currency')
     plt.legend(loc="center left", bbox_to_anchor=(1, 0.5), fontsize = 6)
     plt.tight_layout()

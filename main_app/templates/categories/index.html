@@ -10,8 +10,8 @@
                 <div>
                     <div class="category-items">
                         <span>{{ category.name }}</span>
-                        <a href="{% url 'update_category' category.id %}">Update</a>
-                        <a href="{% url 'delete_category' category.id %}">Delete</a>
+                        <a href="{% url 'update_category' category.id %}" class="link-dark">Update</a>
+                        <a href="{% url 'delete_category' category.id %}" class="link-dark">Delete</a>
                     </div>
                 </div>
                 <ul>
@@ -19,8 +19,8 @@
                     <li>
                         <div class="subcategory-items">
                             <span>{{ subcategory.name }} </span>
-                            <a href="{% url 'update_subcategory' subcategory.id %}">Update</a>
-                            <a href="{% url 'delete_subcategory' subcategory.id %}">Delete</a>
+                            <a href="{% url 'update_subcategory' subcategory.id %}" class="link-dark">Update</a>
+                            <a href="{% url 'delete_subcategory' subcategory.id %}" class="link-dark">Delete</a>
                         </div>
                     </li>
                 

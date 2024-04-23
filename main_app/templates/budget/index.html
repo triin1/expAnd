@@ -69,8 +69,8 @@
                             <td>{{ b.category.name }}</td>
                             <td class="alignment">{{ b.budget_date|date:"F Y" }}</td>
                             <td class="alignment">{{ b.budget_amount }}</td>
-                            <td class="alignment-center"><a href="{% url 'update_budget' b.id %}">Update</a></td>
-                            <td class="alignment-center"><a href="{% url 'delete_budget' b.id %}">Delete</a></td>
+                            <td class="alignment-center"><a href="{% url 'update_budget' b.id %}" class="link-dark">Update</a></td>
+                            <td class="alignment-center"><a href="{% url 'delete_budget' b.id %}" class="link-dark">Delete</a></td>
                         </tr>
                         {% endfor %}
                     </tbody>
