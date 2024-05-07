@@ -16,6 +16,7 @@ Exp& is an application that allows the user to:
 ## Tech stack
 * Python
 * Django
+* SQL
 * Matplotlib
 * HTML
 * CSS
